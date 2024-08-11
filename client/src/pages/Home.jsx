@@ -5,6 +5,7 @@ import ContactUs from "../components/ContactUs";
 import Review from "../components/Feedback";
 import NavBar from "../components/NavBar";
 import OurJur from "../components/OurJur";
+import Footer from "../components/Footer"
 import { useState } from "react";
 
 const Home = () => {
@@ -83,6 +84,7 @@ const Home = () => {
         </div>
       </div>
       <ContactUs />
+      <Footer/>
     </div>
   );
 };
