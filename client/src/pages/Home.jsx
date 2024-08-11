@@ -7,6 +7,9 @@ import NavBar from "../components/NavBar";
 import OurJur from "../components/OurJur";
 import Footer from "../components/Footer"
 import { useState } from "react";
+import { Link as ScrollLink } from "react-scroll";
+import Facilities from "../components/Facilities";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [chatIconClick, setChatIconClick] = useState(false);
@@ -52,13 +55,13 @@ const Home = () => {
         </div>
       )}
       <NavBar />
-      <div className="relative">
+      <div id="home" className="relative">
         <img
           src="https://cpsnb.org/images/slideshow/cpsnb_slide3.jpg"
           alt="main"
           className="h-[600px] min-w-[100%] opacity-95"
         />
-        <div className="absolute top-[35%] left-[10%] flex flex-col gap-5">
+        <div  className="absolute top-[35%] left-[10%] flex flex-col gap-5">
           <h1 className="text-4xl font-bold text-gray-500 w-[400px]">
             Welcome to Kolonna Base Hospital
           </h1>
@@ -66,12 +69,16 @@ const Home = () => {
             We provide the best health care services
           </p>
           <button className="w-[200px] bg-transparent border border-gray-500 text-gray-500  px-5 py-2 rounded-md">
-            <a href="/services">Our Services</a>
+            <ScrollLink to="facilities"
+            smooth={true}
+            duration={500}
+            className="p-2 cursor-pointer hover:bg-gray-200 hover:text-green-600 text-gray-700 text-sm transition duration-200 ease-in-out">Our Services</ScrollLink>
           </button>
         </div>
       </div>
       <OurJur />
       <CardView />
+      <Facilities/>
       <AboutUs />
       <div className="py-1 px-32 mt-10">
         <h1 className="text-4xl font-bold text-green-800 text-center ">
