@@ -7,7 +7,7 @@ const Facilities = () => {
       <h1 className="text-4xl font-bold text-green-800 mb-10">Our Services</h1>
       <div className="grid grid-cols-3 gap-10">
         {/* Radiology Services */}
-        <div className="border border-black p-5 rounded-lg shadow-lg">
+        <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg border border-gray-300 p-5 rounded-lg shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-xl">
           <div className="flex">
             <FaXRay className="w-12 h-12 text-green-800" />
           </div>
@@ -18,7 +18,7 @@ const Facilities = () => {
         </div>
 
         {/* Laboratory Services */}
-        <div className="border border-black p-5 rounded-lg shadow-lg">
+        <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg border border-gray-300 p-5 rounded-lg shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-xl">
           <div className="flex">
             <FaFlask className="w-12 h-12 text-green-800" />
           </div>
@@ -29,7 +29,7 @@ const Facilities = () => {
         </div>
 
         {/* Pharmacy */}
-        <div className="border border-black p-5 rounded-lg shadow-lg">
+        <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg border border-gray-300 p-5 rounded-lg shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-xl">
           <div className="flex">
             <FaPills className="w-12 h-12 text-green-800" />
           </div>

@@ -157,7 +157,7 @@ const QrModal = ({ isOpen, onOpenChange, onOpen, patientID, patientsData }) => {
               <Button
                 color="primary"
                 variant="solid"
-                onClick={patientID ? handleSendEmail : null}
+                onClick={patientID ? () => { handleSendEmail(); onClose(); } : null}
                 disabled={!patientID}
               >
                 Send

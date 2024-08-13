@@ -102,7 +102,7 @@ const AddPatientModel = ({ isOpen, onOpenChange, setRefetch }) => {
                   <Input
                     autoFocus
                     label="First Name"
-                    placeholder="Enter your first name"
+                    placeholder="Enter first name"
                     variant="bordered"
                     {...register("firstName")}
                     errorMessage={errors.firstName?.message}
@@ -110,7 +110,7 @@ const AddPatientModel = ({ isOpen, onOpenChange, setRefetch }) => {
                   />
                   <Input
                     label="Last Name"
-                    placeholder="Enter your last name"
+                    placeholder="Enter last name"
                     variant="bordered"
                     errorMessage={errors.lastName?.message}
                     {...register("lastName")}

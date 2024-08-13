@@ -53,15 +53,15 @@ const CardStarter = () => {
       <div className="mt-5 flex px-10 py-3 items-center justify-center gap-5 bg-slate-200 rounded-lg">
         <FaUsers size={30} className="text-blue-500" />
         <div className="flex flex-col gap-2">
-          <h1 className="font-semibold text-sm">Total Patient</h1>
+          <h1 className="font-semibold text-sm">Total Patients</h1>
           <h2 className="text-gray-700 text-sm">25</h2>
         </div>
       </div>
       <div className="mt-5 flex px-10 py-3 items-center justify-center gap-5 bg-slate-200 rounded-lg">
-        <FaNoteSticky size={30} className="text-blue-500" />
+        <FaUsers size={30} className="text-blue-500" />
         <div className="flex flex-col gap-2">
-          <h1 className="font-semibold text-sm">New Appoiment</h1>
-          <h2 className="text-gray-700 text-sm">12</h2>
+          <h1 className="font-semibold text-sm">Total staff members</h1>
+          <h2 className="text-gray-700 text-sm">25</h2>
         </div>
       </div>
     </div>

@@ -58,11 +58,12 @@ const AddStaffModel = ({ isOpen, onOpenChange }) => {
       console.log("Response:", res); // Log the response to check its status and data
 
       if (res.status === 201) {
-        toast.success("Staff added successfully");
+        toast.success("Staff member added successfully!.check inbox for the login password",{duration:5000});
         setGlobalRefetch(true);
-        toast.success("A password has been sent to your phone number.");
+        onOpenChange(false);
+        reset();
       } else if (res.status === 400) {
-        toast.error("Staff already exists");
+        toast.error("member is already exists");
       } else {
         toast.error("An unexpected status code was returned");
       }
@@ -72,7 +73,7 @@ const AddStaffModel = ({ isOpen, onOpenChange }) => {
         // that falls out of the range of 2xx
         console.error("Response error:", error.response);
         if (error.response.status === 400) {
-          toast.error("Staff already exists");
+          toast.error("Staff member is already exists");
         } else {
           toast.error(
             `An error occurred: ${error.response.status} - ${error.response.data.message}`
@@ -87,7 +88,7 @@ const AddStaffModel = ({ isOpen, onOpenChange }) => {
         console.error("Error:", error.message);
         toast.error(`An error occurred: ${error.message}`);
       }
-      console.error("Error adding staff:", error);
+      console.error("Error while adding staff:", error);
     }
   };
 
@@ -107,14 +108,14 @@ const AddStaffModel = ({ isOpen, onOpenChange }) => {
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">Add Staff</ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">Register New Staff Member</ModalHeader>
             <form onSubmit={handleSubmit(onSubmit)}>
               <ModalBody>
                 <div className="flex gap-5">
                   <Input
                     autoFocus
-                    label="Username"
-                    placeholder="Enter your username"
+                    label="Full Name"
+                    placeholder="Enter full name"
                     variant="bordered"
                     {...register("username")}
                     errorMessage={errors.username?.message}

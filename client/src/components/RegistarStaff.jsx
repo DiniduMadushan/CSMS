@@ -157,12 +157,12 @@ const RegistarStaff = () => {
                           <FaRegEye onClick={() => handleShowMore(item)} />
                         </span>
                       </Tooltip>
-                      <Tooltip content="Edit patient">
+                      <Tooltip content="Edit registar">
                         <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                           <FaUserEdit onClick={() => handleEdit(item)} />
                         </span>
                       </Tooltip>
-                      <Tooltip color="danger" content="Delete patient">
+                      <Tooltip color="danger" content="Delete registar">
                         <span className="text-lg text-danger cursor-pointer active:opacity-50">
                           <MdDeleteSweep
                             onClick={() => handleDelete(item._id)}

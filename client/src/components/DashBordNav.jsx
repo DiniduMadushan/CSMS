@@ -33,11 +33,11 @@ const DashBordNav = () => {
           <div className="flex items-center justify-center gap-10">
             <div className="flex gap-2 items-center text-sm">
               <FaMessage size={16} />
-              Message
+              Messages
             </div>
             <div className="flex gap-2 items-center text-sm">
               <IoIosNotifications size={20} />
-              Notification
+              Notifications
             </div>
             <div className="flex items-center gap-5 p-1 px-4">
               <FaUserGear size={20} />

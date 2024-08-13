@@ -29,7 +29,7 @@ const Dashboard = () => {
         </div>
         <div className="flex  w-full justify-end items-end pr-[15%] mt-10">
           <Button onPress={openModal} color="primary">
-            Add staff
+            Add New Member
           </Button>
         </div>
         <div className="px-10 mt-2 py-5">

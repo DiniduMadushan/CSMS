@@ -105,7 +105,7 @@ const LabStaffList = () => {
   return (
     <div>
       <div className="flex justify-between p-2">
-        <h1 className="text-center mt-2 font-semibold">Laboratory List</h1>
+        <h1 className="text-center mt-2 font-semibold">Laboratory staff members</h1>
       </div>
       <div className="w-[1000px] mt-2">
         <Table
@@ -130,7 +130,7 @@ const LabStaffList = () => {
             <TableColumn>Email</TableColumn>
             <TableColumn>Role</TableColumn>
             <TableColumn>Phone Number</TableColumn>
-            <TableColumn>Ac tion</TableColumn>
+            <TableColumn>Action</TableColumn>
           </TableHeader>
           <TableBody>
             {" "}
@@ -149,12 +149,12 @@ const LabStaffList = () => {
                           <FaRegEye onClick={() => handleShowMore(item)} />
                         </span>
                       </Tooltip>
-                      <Tooltip content="Edit patient">
+                      <Tooltip content="Edit member">
                         <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                           <FaUserEdit onClick={() => handleEdit(item)} />
                         </span>
                       </Tooltip>
-                      <Tooltip color="danger" content="Delete patient">
+                      <Tooltip color="danger" content="Delete member">
                         <span className="text-lg text-danger cursor-pointer active:opacity-50">
                           <MdDeleteSweep
                             onClick={() => handleDelete(item._id)}

@@ -72,7 +72,7 @@ const Home = () => {
             <ScrollLink to="facilities"
             smooth={true}
             duration={500}
-            className="p-2 cursor-pointer hover:bg-gray-200 hover:text-green-600 text-gray-700 text-sm transition duration-200 ease-in-out">Our Services</ScrollLink>
+            className="p-2 cursor-pointer hover:text-green-600 text-gray-700 text-sm transition duration-200 ease-in-out">Our Services</ScrollLink>
           </button>
         </div>
       </div>
