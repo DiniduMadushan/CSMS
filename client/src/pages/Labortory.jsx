@@ -193,7 +193,7 @@ const Laboratory = () => {
         <div className="flex-1 px-5">
           {lab ? (
             <h1 className="text-xl font-semibold text-center mt-1">
-              Lab Report Details
+              Test Request Details
             </h1>
           ) : (
             <div className="border rounded-lg h-60">

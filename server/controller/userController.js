@@ -4,17 +4,21 @@ export const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Find user by email
     const existingUser = await User.findOne({ email });
 
+    // Check if user exists
     if (!existingUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Validate password
     if (existingUser.password !== password) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    res.status(200).json({ user: existingUser });
+    // Send response with userId
+    res.status(200).json({ userId: existingUser._id, user: existingUser });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -35,8 +35,14 @@ const Login = () => {
       console.log(res.status);
       if (res.status === 200) {
         toast.success("Login successfully");
+        
+        // Store the user ID in localStorage
         localStorage.setItem("authUser", JSON.stringify(res.data.user));
+        localStorage.setItem("user_id", res.data.user._id);  // Store userId in localStorage
+  
         console.log(res.data.user.role);
+  
+        // Navigate based on the role
         if (res.data.user.role === "admin") {
           navigate("/dashboard");
         } else if (res.data.user.role === "patient") {
@@ -64,6 +70,7 @@ const Login = () => {
       }
     }
   };
+  
 
   return (
     <div className="fixed flex  h-full w-full flex-col items-center justify-center bg-neutral-100 px-10 ">

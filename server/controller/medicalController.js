@@ -1,7 +1,9 @@
 import Lab from "../model/laboratary.js";
 import Medical from "../model/medical.js";
+import MedicalRecord from "../model/medicalRecord.js";
 import Queue from "../model/queue.js";
 import Xray from "../model/xray.js";
+import PrescriptionList from "../model/prescriptionList.js";
 import { xRayDeliveredSms } from "../utils/SendSMS.js";
 
 export const getMedicals = async (req, res) => {
@@ -13,44 +15,86 @@ export const getMedicals = async (req, res) => {
   }
 };
 
-export const createMedical = async (req, res) => {
-  const medical = req.body;
+export const createMedicalRecord = async (req, res) => {
+  const { patientId, doctorId, description } = req.body;
 
-  const patientId = req.body.patientId;
+  // Check for missing required fields
+  if (!patientId) {
+    
+    return res.status(400).json({ message: "Patient ID is required" });
+    
+  }
 
+  if (!doctorId) {
+    
+    return res.status(400).json({ message: "Doctor ID is required" });
+  }
+
+  if (!description) {
+    return res.status(400).json({ message: "Description is required" });
+  }
+
+  try {
+    // Create a new medical record
+    const newMedicalRecord = new MedicalRecord({
+      patientId,
+      doctorId,
+      description,
+      date: Date.now(),  // Set date to the current timestamp
+    });
+
+    await newMedicalRecord.save();
+
+    return res.status(201).json({
+      data: newMedicalRecord,
+      message: "Medical record added successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+//create a prescriptionList
+export const createPrescriptionList = async (req, res) => {
+  const { patientId, doctorId, prescription_list } = req.body;
+
+  // Check for missing required fields
   if (!patientId) {
     return res.status(400).json({ message: "Patient ID is required" });
   }
 
+  if (!doctorId) {
+    return res.status(400).json({ message: "Doctor ID is required" });
+  }
+
+  if (!prescription_list) {
+    console.log("err3");
+    return res.status(400).json({ message: "Prescription list cannot be empty"});
+  }
+
   try {
-    const exsitMedical = await Medical.findOne({ patientId });
+    // Create a new prescription record
+    const newPrescriptionRecord = new PrescriptionList({
+      patientId: patientId,
+      doctorId: doctorId,
+      prescription:prescription_list, // Save the prescription list
+      date: Date.now(), // Set the current date as the issue date
+    });
 
-    if (exsitMedical) {
-      medical.medicingDilivery = false;
+    // Save the new medical record
+    await newPrescriptionRecord.save();
 
-      const updatedMedical = await Medical.findOneAndUpdate(
-        exsitMedical._id,
-        medical,
-        {
-          new: true,
-        }
-      );
-
-      res.status(200).json({
-        data: updatedMedical,
-        message: "Medical record updated successfully",
-      });
-    } else {
-      const newMedical = new Medical(medical);
-      await newMedical.save();
-      res
-        .status(200)
-        .json({ data: newMedical, message: "Medical record added" });
-    }
+    // Return a success response with the newly created record
+    return res.status(201).json({
+      data: newPrescriptionRecord,
+      message: "Prescription list added successfully",
+    });
   } catch (error) {
-    res.status(409).json({ message: error.message });
+    // Handle errors
+    return res.status(500).json({ message: error.message });
   }
 };
+
 
 export const getMedicalsByPatientId = async (req, res) => {
   const { patientid } = req.params;

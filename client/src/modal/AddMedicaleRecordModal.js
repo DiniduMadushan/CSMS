@@ -11,57 +11,64 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
+const AddMedicaleRecordModal = ({ isOpen, onOpenChange, datac, user_id }) => {
+  const [medicalRecord, setMedicalRecord] = useState("");
 
-const AddMedicaleRecordModal = ({ isOpen, onOpenChange, datac }) => {
-  const [medicalRecode, setMedicalRecode] = useState("");
-
-  const handleMedicalRecodeChange = (e) => {
-    setMedicalRecode(e.target.value);
+  const handleMedicalRecordChange = (e) => {
+    setMedicalRecord(e.target.value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check for required fields
     if (!datac?._id) {
-      return toast.error("Patient ID is required please scan the QR code");
+      return toast.error("Patient ID is required. Please scan the QR code.");
     }
 
-    if (!medicalRecode) {
-      return toast.error("Medical Record is required");
+    if (!medicalRecord) {
+      return toast.error("Medical Record is required.");
     }
 
+    // Prepare the payload with patientId, medicalRecord, and user_id
     const medical = {
       patientId: datac?._id,
-      medicalRecode: medicalRecode,
+      description: medicalRecord,
+      doctorId: user_id, // Pass user_id (doctor's id)
     };
 
-    const res = await axios.post(
-      "http://localhost:5000/medical-record",
-      medical
-    );
-    console.log(res);
-    if (res.status === 200) {
-      toast.success("Medical Record Added Successfully");
-      removeQueue(datac._id);
-      onOpenChange();
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/medical-record",
+        medical
+      );
+
+      if (res.status === 201) {
+        toast.success("Medical Record Added Successfully");
+        removeQueue(datac._id); // Remove patient from queue
+        onOpenChange(); // Close the modal
+      }
+    } catch (error) {
+      console.error("Error adding medical record:", error);
+      toast.error("Failed to add medical record.",error);
     }
   };
 
-   const removeQueue = async (id) => {
-     try {
-       const response = await axios.put(
-         `http://localhost:5000/medical-record/rm/queue/${id}`
-       );
+  const removeQueue = async (id) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/medical-record/rm/queue/${id}`
+      );
 
-       if (response.status === 200) {
-         toast.success(response.data.message);
-         console.log(response.data.queue);
-       }
-     } catch (error) {
-       console.error("Error adding patient to queue:", error);
-       toast.error("Failed to add patient to queue.");
-     }
-   };
-
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        console.log(response.data.queue);
+      }
+    } catch (error) {
+      console.error("Error removing patient from queue:", error);
+      toast.error("Failed to remove patient from queue.");
+    }
+  };
 
   return (
     <Modal
@@ -76,24 +83,24 @@ const AddMedicaleRecordModal = ({ isOpen, onOpenChange, datac }) => {
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              Add Medicale Record
+              Add Medical Record
             </ModalHeader>
-            <form>
+            <form onSubmit={handleSubmit}>
               <ModalBody>
                 <div className="flex gap-5">
                   <Textarea
                     label="Medical Record"
                     placeholder="Enter Medical Record"
-                    onChange={handleMedicalRecodeChange}
+                    onChange={handleMedicalRecordChange}
                   />
                 </div>
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light">
+                <Button color="danger" variant="light" onClick={() => setMedicalRecord("")}>
                   Clear
                 </Button>
-                <Button color="primary" type="submit" onClick={handleSubmit}>
-                  Register
+                <Button color="primary" type="submit">
+                  Add record
                 </Button>
               </ModalFooter>
             </form>
@@ -103,4 +110,5 @@ const AddMedicaleRecordModal = ({ isOpen, onOpenChange, datac }) => {
     </Modal>
   );
 };
+
 export default AddMedicaleRecordModal;

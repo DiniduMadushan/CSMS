@@ -1,18 +1,19 @@
 import Layout from "../layout/Layout";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import QrReader from "react-qr-scanner";
 import React from "react";
 import { useDisclosure } from "@nextui-org/react";
 import ScanQrModal from "../modal/ScanQrModal";
 import ClinicHistoryTable from "../components/ClinicHistoryTable";
 import AddMedicaleRecordModal from "../modal/AddMedicaleRecordModal";
-import AddNewRecordModal from "../modal/AddNewRecordModal";
+import AddPrescriptionModal from "../modal/AddPrescriptionModal";
 import NewXrayModal from "../modal/NewXrayModal";
 import NewBloodReportModal from "../modal/NewBloodReportModal";
 import ClinicDateModal from "../modal/ClinicDateModal";
 
 const DashboardDoctor = () => {
   const [datac, setDatac] = useState(null);
+  const [user_id, setUserId] = useState(null);
 
   const {
     isOpen: isModalOpen,
@@ -27,9 +28,9 @@ const DashboardDoctor = () => {
   } = useDisclosure();
 
   const {
-    isOpen: isAddNewRecordOpen,
-    onOpen: openAddNewRecord,
-    onOpenChange: onAddNewRecordChange,
+    isOpen: isAddPrescriptionOpen,
+    onOpen: openAddPrescription,
+    onOpenChange: onAddPrescriptionChange,
   } = useDisclosure();
 
   const {
@@ -49,6 +50,14 @@ const DashboardDoctor = () => {
     onOpen: openClinicDate,
     onOpenChange: onClinicDateChange,
   } = useDisclosure();
+
+    // Retrieve the user_id from localStorage on component mount
+    useEffect(() => {
+      const storedUserId = localStorage.getItem("user_id");
+      if (storedUserId) {
+        setUserId(storedUserId);
+      }
+    }, []);
 
   return (
     <Layout>
@@ -125,10 +134,10 @@ const DashboardDoctor = () => {
               onClick={openAddMedicaleRecord}
               className="border px-20 py-2 rounded-lg border-white text-sm bg-blue-600 text-white hover:bg-blue-800"
             >
-              Add Medicale Record
+              Add Medical Record
             </button>
             <button
-              onClick={openAddNewRecord}
+              onClick={openAddPrescription}
               className="border px-20 py-2 rounded-lg border-white text-sm bg-blue-600 text-white hover:bg-blue-800"
             >
               Add prescription
@@ -152,13 +161,13 @@ const DashboardDoctor = () => {
               onClick={openClinicDate}
               className="border px-20 py-2 rounded-lg border-white text-sm bg-blue-600 text-white hover:bg-blue-800"
             >
-              Select Clinic Date
+              Next Clinic Date
             </button>
           </div>
         </div>
       </div>
       <div className="flex justify-center">
-        <ClinicHistoryTable />
+        <ClinicHistoryTable patientId={datac?._id} />
       </div>
       <ScanQrModal
         setDatac={setDatac}
@@ -169,12 +178,14 @@ const DashboardDoctor = () => {
         isOpen={isAddMedicaleRecordOpen}
         onOpenChange={onAddMedicaleRecordChange}
         datac={datac}
+        user_id={user_id} 
       />
 
-      <AddNewRecordModal
-        isOpen={isAddNewRecordOpen}
-        onOpenChange={onAddNewRecordChange}
+      <AddPrescriptionModal
+        isOpen={isAddPrescriptionOpen}
+        onOpenChange={onAddPrescriptionChange}
         datac={datac}
+        user_id={user_id} 
       />
 
       <NewXrayModal
