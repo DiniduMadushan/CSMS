@@ -7,13 +7,13 @@ import ScanQrModal from "../modal/ScanQrModal";
 import ClinicHistoryTable from "../components/ClinicHistoryTable";
 import AddMedicaleRecordModal from "../modal/AddMedicaleRecordModal";
 import AddPrescriptionModal from "../modal/AddPrescriptionModal";
-import NewXrayModal from "../modal/NewXrayModal";
+import AddXrayModal from "../modal/NewXrayModal";
 import NewBloodReportModal from "../modal/NewBloodReportModal";
 import ClinicDateModal from "../modal/ClinicDateModal";
 
 const DashboardDoctor = () => {
   const [datac, setDatac] = useState(null);
-  const [user_id, setUserId] = useState(null);
+  const [doc_name, setDocName] = useState(null);
 
   const {
     isOpen: isModalOpen,
@@ -51,11 +51,11 @@ const DashboardDoctor = () => {
     onOpenChange: onClinicDateChange,
   } = useDisclosure();
 
-    // Retrieve the user_id from localStorage on component mount
+    // Retrieve the doctor_name from localStorage on component mount
     useEffect(() => {
-      const storedUserId = localStorage.getItem("user_id");
-      if (storedUserId) {
-        setUserId(storedUserId);
+      const storedDoctorName = localStorage.getItem("username");
+      if (storedDoctorName) {
+        setDocName(storedDoctorName);
       }
     }, []);
 
@@ -147,14 +147,14 @@ const DashboardDoctor = () => {
               onClick={openXray}
               className="border px-20 py-2 rounded-lg border-white text-sm bg-blue-600 text-white hover:bg-blue-800"
             >
-              New X-ray
+              X-ray Request
             </button>
 
             <button
               onClick={openBlood}
               className="border px-20 py-2 rounded-lg border-white text-sm bg-blue-600 text-white hover:bg-blue-800"
             >
-              New Blood Report
+              Blood Report Request
             </button>
 
             <button
@@ -178,32 +178,35 @@ const DashboardDoctor = () => {
         isOpen={isAddMedicaleRecordOpen}
         onOpenChange={onAddMedicaleRecordChange}
         datac={datac}
-        user_id={user_id} 
+        docName={doc_name}
       />
 
       <AddPrescriptionModal
         isOpen={isAddPrescriptionOpen}
         onOpenChange={onAddPrescriptionChange}
         datac={datac}
-        user_id={user_id} 
+        docName={doc_name}
       />
 
-      <NewXrayModal
+      <AddXrayModal
         isOpen={isXrayOpen}
         onOpenChange={onXrayChange}
         datac={datac}
+        docName={doc_name}
       />
 
       <NewBloodReportModal
         isOpen={isBloodOpen}
         onOpenChange={onBloodChange}
         datac={datac}
+        docName={doc_name} 
       />
 
       <ClinicDateModal
         isOpen={isClinicDateOpen}
         onOpenChange={onClinicDateChange}
         datac={datac}
+        docName={doc_name}
       />
     </Layout>
   );

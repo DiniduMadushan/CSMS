@@ -57,12 +57,13 @@ const PrintModel = ({ isOpen, onOpenChange, unavailableDrugs }) => {
                   <h1
                     style={{
                       textAlign: "center",
-                      fontSize: "18px",
+                      fontSize: "14px",
                       fontWeight: "bold",
                       zIndex: 1,
+                      marginBottom:"20px"
                     }}
                   >
-                    Unavailable Drugs
+                    <u>Kolonna Base Hospital - ENT unit</u>
                   </h1>
                   {unavailableDrugs.length > 0
                     ? unavailableDrugs.map((drug, index) => (

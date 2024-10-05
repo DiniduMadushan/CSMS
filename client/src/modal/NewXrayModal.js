@@ -12,7 +12,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-const NewXrayModal = ({ isOpen, onOpenChange, datac }) => {
+const NewXrayModal = ({ isOpen, onOpenChange, datac, docName }) => {
   const [xray, setXray] = useState("");
 
   const handleXrayChange = (e) => {
@@ -30,8 +30,8 @@ const NewXrayModal = ({ isOpen, onOpenChange, datac }) => {
     }
 
     //this one want get logged doctor name
-    const xrayIssued = "Dr Isuru";
-    const medical = {
+    const xrayIssued = docName;
+    const xrayRequest = {
       patientId: datac?._id,
       xray: xray,
       xrayIssued,
@@ -39,7 +39,7 @@ const NewXrayModal = ({ isOpen, onOpenChange, datac }) => {
 
     const res = await axios.post(
       "http://localhost:5000/medical-record/xray",
-      medical
+      xrayRequest
     );
     console.log(res);
     if (res.status === 200) {

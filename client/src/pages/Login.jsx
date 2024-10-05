@@ -36,9 +36,11 @@ const Login = () => {
       if (res.status === 200) {
         toast.success("Login successfully");
         
-        // Store the user ID in localStorage
+         // Store the user object in localStorage
         localStorage.setItem("authUser", JSON.stringify(res.data.user));
-        localStorage.setItem("user_id", res.data.user._id);  // Store userId in localStorage
+
+        // Store the username in localStorage instead of user ID
+        localStorage.setItem("username", res.data.user.username);
   
         console.log(res.data.user.role);
   

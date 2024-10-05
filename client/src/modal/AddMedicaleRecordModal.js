@@ -11,7 +11,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-const AddMedicaleRecordModal = ({ isOpen, onOpenChange, datac, user_id }) => {
+const AddMedicaleRecordModal = ({ isOpen, onOpenChange, datac, docName }) => {
   const [medicalRecord, setMedicalRecord] = useState("");
 
   const handleMedicalRecordChange = (e) => {
@@ -34,7 +34,7 @@ const AddMedicaleRecordModal = ({ isOpen, onOpenChange, datac, user_id }) => {
     const medical = {
       patientId: datac?._id,
       description: medicalRecord,
-      doctorId: user_id, // Pass user_id (doctor's id)
+      docName: docName,
     };
 
     try {

@@ -4,10 +4,10 @@ const labSchema = new mongoose.Schema({
   patientId: {
     type: String,
   },
-  reportIssued: {
+  report_desc: {
     type: String,
   },
-  report: {
+  reportRequested: {
     type: String,
   },
   date: {

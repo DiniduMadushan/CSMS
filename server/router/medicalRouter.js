@@ -7,8 +7,9 @@ import {
   createMedicalXray,
   getLabReport,
   getMedicals,
-  getMedicalsByPatientId,
+  getPrescriptionByPatientId,
   getMedicalXray,
+  nextClinicDate,
   getQueue,
   removeQueue,
   updateLabReport,
@@ -19,10 +20,11 @@ import {
 const medicalRouter = express.Router();
 
 medicalRouter.get("/", getMedicals);
-medicalRouter.get("/:patientid", getMedicalsByPatientId);
+medicalRouter.get("/:patientid", getPrescriptionByPatientId);
 medicalRouter.post("/", createMedicalRecord);
 medicalRouter.post("/prescriptionList", createPrescriptionList);
 medicalRouter.post("/xray", createMedicalXray);
+medicalRouter.post("/nextDate", nextClinicDate);
 medicalRouter.get("/xray/:patientid", getMedicalXray);
 medicalRouter.put("/xray/delivered/:id", updateMedicalXray);
 medicalRouter.post("/lab", createLabReport);

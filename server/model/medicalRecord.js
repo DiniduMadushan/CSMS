@@ -5,7 +5,7 @@ const MedicalRecordSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  doctorId: {
+  docName: {
     type: String,
     required: true,
   },

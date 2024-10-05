@@ -12,7 +12,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-const AddPrescriptionModal = ({ isOpen, onOpenChange, datac, user_id }) => {
+const AddPrescriptionModal = ({ isOpen, onOpenChange, datac, docName}) => {
   const [prescription, setPrescription] = useState("");
 
   const handlePrescriptionChange = (e) => {
@@ -31,7 +31,7 @@ const AddPrescriptionModal = ({ isOpen, onOpenChange, datac, user_id }) => {
 
     const prescriptionList = {
       patientId: datac?._id,
-      doctorId: user_id, // Pass user_id here
+      docName: docName,
       prescription_list: prescription,
     };
 

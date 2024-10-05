@@ -12,7 +12,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-const NewBloodReportModal = ({ isOpen, onOpenChange, datac }) => {
+const NewBloodReportModal = ({ isOpen, onOpenChange, datac,docName }) => {
   const [bloodReport, setBloodReport] = useState("");
 
   const handleBloodReportChange = (e) => {
@@ -29,19 +29,19 @@ const NewBloodReportModal = ({ isOpen, onOpenChange, datac }) => {
       return toast.error("Blood Report is required");
     }
 
-    const medical = {
+    const bloodReportRequest = {
       patientId: datac?._id,
-      report: bloodReport,
-      reportIssued: "Isuru sajith",
+      report_desc: bloodReport,
+      reportRequested: docName,
     };
 
     const res = await axios.post(
       "http://localhost:5000/medical-record/lab",
-      medical
+      bloodReportRequest
     );
     console.log(res);
     if (res.status === 200) {
-      toast.success("Blood Report Added Successfully");
+      toast.success("Blood Report Request is Added Successfully");
       onOpenChange();
     }
   };
@@ -66,8 +66,8 @@ const NewBloodReportModal = ({ isOpen, onOpenChange, datac }) => {
                 <div className="flex gap-5">
                   <Textarea
                     autoFocus
-                    label="Blood Report"
-                    placeholder="Enter Blood Report"
+                    label="Blood Report Request"
+                    placeholder="Enter Report description"
                     onChange={handleBloodReportChange}
                   />
                 </div>
