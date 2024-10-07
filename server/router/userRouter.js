@@ -6,6 +6,7 @@ import {
   updateUser,
   userLogin,
   userRegister,
+  getUserCount,
 } from "../controller/userController.js";
 import { staffRegister } from "../controller/staffController.js";
 
@@ -18,6 +19,7 @@ userRouter.get("/", getUsers);
 userRouter.get("/:id", getUserById);
 userRouter.put("/:id", updateUser);
 userRouter.delete("/:id", deleteUser);
+userRouter.get("/count", getUserCount);
 
 
 export default userRouter;

@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 const Radiology = () => {
   const [page, setPage] = useState(1);
   const [datac, setData] = useState(null);
+  const [age, setAge] = useState('');
   const [x, setX] = useState([]);
   const [refetch, setRefetch] = useState(false);
   const rowsPerPage = 6;
@@ -54,7 +55,7 @@ const Radiology = () => {
             const xray = data;
 
             setX(xray);
-            toast.success("Successfully retrieved Xray.");
+            // toast.success("Successfully retrieved Xray.");
           }
         } catch (error) {
           console.error("Error retrieving Xray:", error);
@@ -96,6 +97,26 @@ const Radiology = () => {
     }
   };
 
+  //retrive the age of the patient
+  useEffect(() => {
+    if (datac && datac.dob) {
+      const calculatedAge = calculateAge(new Date(datac.dob));
+      setAge(calculatedAge);
+    }
+  }, [datac]);
+
+   // Function to calculate age
+   const calculateAge = (birthdate) => {
+    const today = new Date();
+    let age = today.getFullYear() - birthdate.getFullYear();
+    const monthDiff = today.getMonth() - birthdate.getMonth();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
   return (
     <Layout>
       <div className="flex px-10">
@@ -130,6 +151,7 @@ const Radiology = () => {
               <div className="flex w-[520px] gap-10 p-4 rounded-lg border items-center">
                 <div className="flex flex-col gap-2 ml-10">
                   <h1>Patient Name:</h1>
+                  <h1>Patient Age:</h1>
                   <h1>Id Number:</h1>
                   <h1>Birth Day:</h1>
                   <h1>Phone Number:</h1>
@@ -140,6 +162,7 @@ const Radiology = () => {
                   <div className="text-blue-500">
                     {datac.firstName + " " + datac.lastName}
                   </div>
+                  <div className="text-blue-500">{age} years</div>
                   <div className="text-blue-500">{datac.idNumber}</div>
                   <div className="text-blue-500">
                     {new Date(datac.dob).toLocaleDateString()}
@@ -173,7 +196,7 @@ const Radiology = () => {
                 // x?.map((data) => (
                 <div className="flex w-[520px] gap-10 p-4 rounded-lg border items-center">
                   <div className="flex flex-col gap-2 ml-10">
-                    <h1>Issues by:</h1>
+                    <h1>Issued by Dr. </h1>
                     <h1>Issues date:</h1>
                     <h1>Description</h1>
                   </div>
@@ -227,7 +250,7 @@ const Radiology = () => {
               {items.map((item, index) => (
                 <TableRow key={item.id}>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell>{item.xrayIssued}</TableCell>
+                  <TableCell>Dr. {item.xrayIssued}</TableCell>
                   <TableCell>
                     {new Date(item.date).toLocaleDateString()}
                   </TableCell>

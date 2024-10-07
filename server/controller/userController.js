@@ -107,3 +107,12 @@ export const deleteUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getUserCount=async (req, res) => {
+  try {
+    const count = await User.countDocuments();
+    res.status(200).json({ totalStaff: count });
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching staff count" });
+  }
+};

@@ -7,14 +7,36 @@ import Xray from "../model/xray.js";
 import PrescriptionList from "../model/prescriptionList.js";
 import { xRayDeliveredSms } from "../utils/SendSMS.js";
 
-export const getMedicals = async (req, res) => {
+export const getMedicalHistory = async (req, res) => {
   try {
-    const medicals = await Medical.find();
-    res.json(medicals);
+    const medicalRecords = await MedicalRecord.find();
+    res.status(200).json(medicalRecords);
+    
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
 };
+
+
+// Get medical records for a specific patient by patientId
+export const getPatientHistory = async (req, res) => {
+  const { patientid } = req.params; 
+
+  try {
+    const medicalRecords = await MedicalRecord.find({ patientId: patientid });
+
+    if (medicalRecords.length === 0) {
+      return res.status(404).json({ message: "No medical records found for this patient" });
+    }
+
+    res.status(200).json(medicalRecords);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 
 export const createMedicalRecord = async (req, res) => {
   const { patientId, docName, description } = req.body;
@@ -382,3 +404,41 @@ export const getQueue = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+export const getPrescriptionHistoryByPatientId = async (req, res) => {
+  const { patientid } = req.params; 
+  try {
+    const prescriptions = await PrescriptionList.find({ patientId:patientid});
+    
+    res.json(prescriptions);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching prescriptions" });
+  }
+};
+
+export const getXrayHistoryByPatientId = async (req, res) => {
+  const { patientId } = req.params;
+  const { date } = req.query;
+  console.log("xray called");
+
+  try {
+    const xray = await Xray.findOne({ patientId, date });
+    res.status(200).json(xray);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getLabHistoryByPatientId= async (req, res) => {
+  const { patientId } = req.params;
+  const { date } = req.query;
+  console.log("lab called");
+  try {
+    const lab = await Lab.findOne({ patientId, date });
+    res.status(200).json(lab);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+

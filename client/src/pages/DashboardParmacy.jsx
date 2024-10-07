@@ -1,23 +1,20 @@
 import { useEffect, useState } from "react";
 import Layout from "../layout/Layout";
-import {
-  Button,
-  Checkbox,
-  CheckboxGroup,
-  useDisclosure,
-} from "@nextui-org/react";
+import { Button, Checkbox, CheckboxGroup, useDisclosure } from "@nextui-org/react";
 import ScanQrModalParamarcy from "../components/ScanQrModalParamarcy";
 import axios from "axios";
 import PrintModel from "../modal/PrintModel";
+import PrescriptionHistoryTable from "../components/PrescriptionHistoryTable";
 
 const DashboardPharmacy = () => {
-  const [datac, setData] = useState(null);  // Patient data from QR code
+  const [datac, setData] = useState(null); // Patient data from QR code
   const [prescription, setPrescription] = useState([]);
   const [unavailableDrugs, setUnavailableDrugs] = useState([]);
   const [doctorName, setDoctorName] = useState('');
   const [prescriptionDate, setPrescriptionDate] = useState('');
-  const [PharmacistName, setPharmacistName] = useState(null);
+  const [pharmacistName, setPharmacistName] = useState(null);
   const [age, setAge] = useState('');
+  const [currentDate, setCurrentDate] = useState('');
 
   const {
     isOpen: isModalOpen,
@@ -33,25 +30,20 @@ const DashboardPharmacy = () => {
 
   useEffect(() => {
     if (datac) {
-      fetchPrescriptionData(datac._id);  // Fetch prescription after scanning QR
+      fetchPrescriptionData(datac._id); // Fetch prescription after scanning QR
     }
   }, [datac]);
 
   const fetchPrescriptionData = async (id) => {
     try {
-      // Fetch the most recent prescription by patient ID
-      const response = await axios.get(
-        `http://localhost:5000/medical-record/${id}`
-      );
+      const response = await axios.get(`http://localhost:5000/medical-record/${id}`);
 
       if (response.data) {
         const { prescription, docName, date } = response.data;
-        const prescriptionData = prescription
-          ? prescription.split(",")  // Split the prescription into an array
-          : [];
+        const prescriptionData = prescription ? prescription.split(",") : [];
         setPrescription(prescriptionData);
-        setDoctorName(docName || 'Unknown doctor');  // Set doctor name
-        setPrescriptionDate(date ? new Date(date).toLocaleDateString() : 'Unknown date');  // Format and set date
+        setDoctorName(docName || 'Unknown doctor');
+        setPrescriptionDate(date ? new Date(date).toLocaleDateString() : 'Unknown date');
       } else {
         setPrescription([]);
         setDoctorName('Unknown doctor');
@@ -65,15 +57,15 @@ const DashboardPharmacy = () => {
     }
   };
 
-   // Retrieve the doctor_name from localStorage on component mount
-   useEffect(() => {
-    const PharmacistName = localStorage.getItem("username");
-    if (PharmacistName) {
-      setPharmacistName(PharmacistName);
+  // Retrieve pharmacist's name from localStorage on component mount
+  useEffect(() => {
+    const pharmacist = localStorage.getItem("username");
+    if (pharmacist) {
+      setPharmacistName(pharmacist);
     }
   }, []);
 
-  //retrive the age of the patient
+  // Retrieve the age of the patient
   useEffect(() => {
     if (datac && datac.dob) {
       const calculatedAge = calculateAge(new Date(datac.dob));
@@ -81,21 +73,25 @@ const DashboardPharmacy = () => {
     }
   }, [datac]);
 
-   // Function to calculate age
-   const calculateAge = (birthdate) => {
+  // Function to calculate age
+  const calculateAge = (birthdate) => {
     const today = new Date();
     let age = today.getFullYear() - birthdate.getFullYear();
     const monthDiff = today.getMonth() - birthdate.getMonth();
-
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdate.getDate())) {
       age--;
     }
     return age;
   };
 
+  // Set the current date
+  useEffect(() => {
+    const today = new Date().toLocaleDateString();
+    setCurrentDate(today);
+  }, []);
+
   return (
     <Layout>
-    
       <div className="flex px-10">
         <div className="flex flex-col items-center justify-center">
           <button
@@ -111,14 +107,10 @@ const DashboardPharmacy = () => {
       <div className="flex flex-row mt-10">
         <div className="flex-1 px-5">
           {datac ? (
-            <h1 className="text-xl font-semibold text-center mt-1">
-              Patient Details
-            </h1>
+            <h1 className="text-xl font-semibold text-center mt-1">Patient Details</h1>
           ) : (
             <div className="border rounded-lg h-60">
-              <h1 className="text-2xl font-semibold text-center mt-5">
-                Patient Details
-              </h1>
+              <h1 className="text-2xl font-semibold text-center mt-5">Patient Details</h1>
               <h1 className="text-red-500 text-sm mt-10 text-center">
                 No patient data found. Please scan a QR code.
               </h1>
@@ -151,27 +143,22 @@ const DashboardPharmacy = () => {
         </div>
 
         <div className="flex-1 px-5 border rounded-lg">
-        
-          <h1 className="text-2xl font-semibold text-center mt-5">
-            Prescription List
-          </h1>
-
+          <h1 className="text-2xl font-semibold text-center mt-5">Prescription List</h1>
           <div>
-      {datac && (
-        <div className="flex flex-col gap-2 mt-5">
-          <div className="flex">
-            <p className="font-semibold">Issued by:</p>
-            <p className="ml-2">Dr. {doctorName}</p>
+            {datac && (
+              <div className="flex flex-col gap-2 mt-5">
+                <div className="flex">
+                  <p className="font-semibold">Issued by:</p>
+                  <p className="ml-2">Dr. {doctorName}</p>
+                </div>
+                <div className="flex">
+                  <p className="font-semibold">Issued Date:</p>
+                  <p className="ml-2">{prescriptionDate}</p>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="flex">
-            <p className="font-semibold">Issued Date:</p>
-            <p className="ml-2">{prescriptionDate}</p>
-          </div>
-        </div>
 
-      )}
-    </div>
-          
           <div className="flex flex-col gap-3 ml-10 justify-center">
             {prescription.length > 0 ? (
               <div className="flex w-[500px] flex-col gap-3 mt-3 mr-10 p-2">
@@ -196,28 +183,28 @@ const DashboardPharmacy = () => {
       </div>
 
       <div className="flex justify-center mt-5 p-5 rounded-lg w-[500px] mx-auto">
-        <Button
-          color="primary"
-          className="items-center"
-          onClick={openPrintModal}
-        >
+        <Button color="primary" className="items-center" onClick={openPrintModal}>
           Print unavailable drugs
         </Button>
       </div>
 
       {/* Scan QR Modal */}
-      <ScanQrModalParamarcy
-        setData={setData}
-        isOpen={isModalOpen}
-        onOpenChange={onModalChange}
-      />
+      <ScanQrModalParamarcy setData={setData} isOpen={isModalOpen} onOpenChange={onModalChange} />
 
       {/* Print Modal */}
       <PrintModel
         isOpen={isPrintModalOpen}
         onOpenChange={onPrintModalChange}
         unavailableDrugs={unavailableDrugs}
+        pharmacistName={pharmacistName}
+        patientName={datac ? `${datac.firstName} ${datac.lastName}` : ''}
+        patientAge={age}
+        currentDate={currentDate}
       />
+
+    <div className="flex justify-center">
+        <PrescriptionHistoryTable patientId={datac?._id} />
+      </div>
     </Layout>
   );
 };

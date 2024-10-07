@@ -28,6 +28,17 @@ export const getPatientById = async (req, res) => {
   }
 };
 
+export const getPatientCount= async (req, res) => {
+  try {
+    console.log("Inside function")
+    const count = await Patients.countDocuments();
+    res.status(200).json({ totalPatients: count });
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching patient count" });
+  }
+};
+
+
 export const createPatient = async (req, res) => {
   try {
     const {

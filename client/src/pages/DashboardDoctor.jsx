@@ -154,7 +154,7 @@ const DashboardDoctor = () => {
               onClick={openBlood}
               className="border px-20 py-2 rounded-lg border-white text-sm bg-blue-600 text-white hover:bg-blue-800"
             >
-              Blood Report Request
+              Lab Report Request
             </button>
 
             <button
