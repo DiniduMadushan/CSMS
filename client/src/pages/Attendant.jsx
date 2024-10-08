@@ -81,7 +81,7 @@ const Attendant = () => {
         <div className="flex flex-col items-center justify-center">
           <div className="">
             <div className="flex flex-col items-center justify-center w-44 text-center   rounded-lg text-xl p-2 border-2">
-              Patient In The Queue : {queue ? queue[0]?.queue?.length : "0"}
+              Patients In The Queue : {queue ? queue[0]?.queue?.length : "0"}
             </div>
           </div>
         </div>
@@ -146,11 +146,7 @@ const Attendant = () => {
         onOpenChange={onModalChange}
       />
 
-      {/* <PrintModel
-        isOpen={isPrintModalOpen}
-        onOpenChange={onPrintModalChange}
-        unavailableDrugs={unavailableDrugs}
-      /> */}
+    
     </Layout>
   );
 };

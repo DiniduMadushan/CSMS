@@ -197,7 +197,7 @@ const Radiology = () => {
                 <div className="flex w-[520px] gap-10 p-4 rounded-lg border items-center">
                   <div className="flex flex-col gap-2 ml-10">
                     <h1>Issued by Dr. </h1>
-                    <h1>Issues date:</h1>
+                    <h1>Issued date:</h1>
                     <h1>Description</h1>
                   </div>
                   <div className="flex flex-col gap-2">

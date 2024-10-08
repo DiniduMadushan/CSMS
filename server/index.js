@@ -6,30 +6,36 @@ import dotenv from "dotenv";
 import userRouter from "./router/userRouter.js";
 import patientRouter from "./router/patientRouter.js";
 import medicalRouter from "./router/medicalRouter.js";
+import reportsRouter from "./router/reportsRouter.js";
 import { sendUsernamePassword } from "./utils/SendSMS.js";
 import path from "path";
 import multer from "multer";
 import nodemailer from "nodemailer";
 import Feedback from "./model/feedback.js";
 import User from "./model/User.js";
-// import staffRouter from "./routers/staffRouter.js";
-// import studentRouter from "./routers/studentRouter.js";
-// import assessmentRouter from "./routers/assessmentRouter.js";
+import { fileURLToPath } from "url"; // New addition to fix __dirname
+
+// Get the __dirname equivalent
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = 5000;
 dotenv.config();
 
+// Set up multer to store files locally
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // Fix for static uploads path
 
 app.use("/auth", userRouter);
 app.use("/patients", patientRouter);
 app.use("/medical-record", medicalRouter);
+app.use("/reports", reportsRouter);
 
 connectMongoDB();
 
@@ -65,6 +71,7 @@ app.post("/send-email", upload.single("attachment"), (req, res) => {
     res.status(200).send("Email sent: " + info.response);
   });
 });
+
 app.post("/feedback", async (req, res) => {
   const { email, feedback, id } = req.body;
   console.log(email);
@@ -99,5 +106,6 @@ app.get("/feedback", async (req, res) => {
     res.status(500).json({ message: error.toString() });
   }
 });
+
 app.get("/", (req, res) => res.send("Hello World!"));
 app.listen(port, () => console.log(`app listening on port ${port}!`));

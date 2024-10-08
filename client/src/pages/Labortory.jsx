@@ -1,3 +1,5 @@
+// Laboratory.jsx
+
 import {
   Button,
   Input,
@@ -11,15 +13,10 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import Layout from "../layout/Layout";
-import ScanQrModalLaboratary from "../modal/ScanQrModalLaboratary"; // Adjust path if needed
+import ScanQrModalLaboratary from "../modal/ScanQrModalLaboratary";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { appF } from "../db/firebase";
-import axios from "axios";
-
-// Firebase storage setup
-const storage = getStorage(appF);
+import axios from "axios"; // Ensure axios is imported
 
 const Laboratory = () => {
   const [page, setPage] = useState(1);
@@ -33,8 +30,8 @@ const Laboratory = () => {
 
   // Function to handle file change
   const fileChange = (e) => {
-    const file = e.target.files[0];
-    setFile(file);
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
   };
 
   // Paginate lab items
@@ -78,26 +75,33 @@ const Laboratory = () => {
       return;
     }
 
-    const storageRef = ref(storage, `doc/${file.name}`);
-    await uploadBytes(storageRef, file);
-    const url = await getDownloadURL(storageRef);
+    if (!datac) {
+      toast.error("No patient data available.");
+      return;
+    }
 
-    const postData = {
-      firstName: datac.firstName,
-      lastName: datac.lastName,
-      phoneNumber: datac.phoneNumber,
-      pdfUrl: url,
-    };
+    // Prepare FormData
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("patientId", datac._id); // Assuming datac._id is the patient ID
+    formData.append("testDescription", "Medical Report PDF"); // You can modify this as needed
+    formData.append("lab_delivered", true);
 
     try {
-      await axios.put(
-        `http://localhost:5000/medical-record/lab/delivered/${lab[lab.length - 1]?._id}`,
-        postData
-      );
-      toast.success("Report added successfully");
-      setRefetch(!refetch); // Trigger refetch to update data
+      const response = await axios.post("http://localhost:5000/reports/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.status === 201) {
+        toast.success("Report uploaded successfully");
+        setRefetch(!refetch); // Trigger refetch to update data
+        setFile(null); // Reset the file input
+      }
     } catch (error) {
-      toast.error("An error occurred. Please try again.");
+      console.error("Error uploading file:", error);
+      toast.error("An error occurred during file upload. Please try again.");
     }
   };
 
@@ -173,7 +177,7 @@ const Laboratory = () => {
 
         {/* Lab Report Details Section */}
         <div className="flex-1 px-5">
-          {lab ? (
+          {lab.length > 0 ? (
             <h1 className="text-xl font-semibold text-center mt-1">Test Request Details</h1>
           ) : (
             <div className="border rounded-lg h-60">
@@ -182,17 +186,28 @@ const Laboratory = () => {
             </div>
           )}
           <div className="flex mt-2 items-center justify-center">
-            {lab && (
+            {lab.length > 0 && (
               <div className="flex w-[520px] gap-10 p-4 rounded-lg border items-center">
                 <div className="flex flex-col gap-2 ml-10">
-                  <h1>Issued by:</h1>
+                  <h1>Issued by Dr.</h1>
                   <h1>Issued date:</h1>
                   <h1>Description:</h1>
+                  
                 </div>
                 <div className="flex flex-col gap-2">
                   <div className="text-blue-500">{lab[lab.length - 1]?.reportRequested}</div>
                   <div className="text-blue-500">{new Date(lab[lab.length - 1]?.date).toLocaleDateString()}</div>
                   <div className="text-blue-500">{lab[lab.length - 1]?.report_desc}</div>
+                  {lab[lab.length - 1]?.fileUrl && (
+                    <a
+                      href={`http://localhost:5000/${lab[lab.length - 1]?.fileUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 underline"
+                    >
+                      View Report
+                    </a>
+                  )}
                 </div>
               </div>
             )}
@@ -202,6 +217,7 @@ const Laboratory = () => {
           <div className="ml-[120px] gap-2 flex justify-center mt-10 flex-col w-[550px]">
             <input
               type="file"
+              accept=".pdf"
               placeholder="Enter Lab Report"
               onChange={fileChange}
               className="p-2 border-2 border-gray-300 rounded-lg cursor-pointer"
@@ -217,7 +233,7 @@ const Laboratory = () => {
       <div className="w-full flex items-center justify-center mt-16">
         <div className="w-[1000px] mt-2">
           <Table
-            aria-label="Example static collection table"
+            aria-label="Lab Reports Table"
             bottomContent={
               <div className="flex w-full justify-center">
                 <Pagination
@@ -236,7 +252,6 @@ const Laboratory = () => {
               <TableColumn>Issued By</TableColumn>
               <TableColumn>Issued Date</TableColumn>
               <TableColumn>Description</TableColumn>
-              <TableColumn>Delivered</TableColumn>
             </TableHeader>
             <TableBody>
               {items.map((item, index) => (
@@ -244,7 +259,7 @@ const Laboratory = () => {
                   <TableCell>{item.reportRequested}</TableCell>
                   <TableCell>{new Date(item.date).toLocaleDateString()}</TableCell>
                   <TableCell>{item.report_desc}</TableCell>
-                  <TableCell>{item.lab_delivered ? "Yes" : "No"}</TableCell>
+                  
                 </TableRow>
               ))}
             </TableBody>

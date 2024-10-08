@@ -3,6 +3,7 @@ import Appointment from "../model/appointment.js";
 import Medical from "../model/medical.js";
 import MedicalRecord from "../model/medicalRecord.js";
 import Queue from "../model/queue.js";
+import Patient from "../model/Patients.js"
 import Xray from "../model/xray.js";
 import PrescriptionList from "../model/prescriptionList.js";
 import { xRayDeliveredSms } from "../utils/SendSMS.js";
@@ -81,7 +82,7 @@ export const createMedicalRecord = async (req, res) => {
 export const createPrescriptionList = async (req, res) => {
   const { patientId, docName, prescription_list } = req.body;
 
-  // Check for missing required fields
+  
   if (!patientId) {
     return res.status(400).json({ message: "Please Scan patient's QR" });
   }
@@ -96,24 +97,21 @@ export const createPrescriptionList = async (req, res) => {
   }
 
   try {
-    // Create a new prescription record
+    
     const newPrescriptionRecord = new PrescriptionList({
       patientId: patientId,
       docName: docName,
-      prescription:prescription_list, // Save the prescription list
-      date: Date.now(), // Set the current date as the issue date
+      prescription:prescription_list, 
+      date: Date.now(), 
     });
 
     // Save the new medical record
     await newPrescriptionRecord.save();
-
-    // Return a success response with the newly created record
     return res.status(201).json({
       data: newPrescriptionRecord,
       message: "Prescription list added successfully",
     });
   } catch (error) {
-    // Handle errors
     return res.status(500).json({ message: error.message });
   }
 };
@@ -127,19 +125,18 @@ export const getPrescriptionByPatientId = async (req, res) => {
       .sort({ date: -1 })  
       .select('docName date prescription'); 
 
-    // Check if no prescriptions were found
+   
     if (!prescription) {
       return res.status(404).json({ message: "Prescription list not found" });
     }
 
-    // Return the most recent prescription with docName, date, and prescription fields
+    
     res.json({
       docName: prescription.docName,
       date: prescription.date,
       prescription: prescription.prescription,
     });
   } catch (error) {
-    // Handle error
     res.status(500).json({ message: error.message });
   }
 };
@@ -290,7 +287,7 @@ export const updateLabReport = async (req, res) => {
 export const nextClinicDate = async (req, res) => {
   const { patientId, dateIssuedBy, date } = req.body;
 
-  // Validate required fields
+  
   if (!patientId) {
     return res.status(400).json({ message: "Patient ID is required" });
   }
@@ -312,17 +309,17 @@ export const nextClinicDate = async (req, res) => {
       return res.status(400).json({ message: "invalid date" });
     }
 
-    // Create a new appointment record
+   
     const newAppointment = new Appointment({
       patientId,
       dateIssuedBy,
       date: new Date(date),
     });
 
-    // Save the appointment record
+    
     await newAppointment.save();
 
-    // Send success response
+    
     return res.status(201).json({
       message: "Next clinic date set successfully",
       appointment: newAppointment,
@@ -331,6 +328,8 @@ export const nextClinicDate = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+//add to the queue
 
 export const addQueue = async (req, res) => {
   const { id } = req.params;
@@ -364,6 +363,7 @@ export const addQueue = async (req, res) => {
   }
 };
 
+//remove from the queue
 export const removeQueue = async (req, res) => {
   const { id } = req.params;
 
@@ -396,6 +396,7 @@ export const removeQueue = async (req, res) => {
   }
 };
 
+//get details from the queue
 export const getQueue = async (req, res) => {
   try {
     const queue = await Queue.find();
@@ -404,6 +405,8 @@ export const getQueue = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+//get prescription history of a patient
 
 export const getPrescriptionHistoryByPatientId = async (req, res) => {
   const { patientid } = req.params; 
