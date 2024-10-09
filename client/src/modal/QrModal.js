@@ -54,7 +54,7 @@ const QrModal = ({ isOpen, onOpenChange, onOpen, patientID, patientsData }) => {
       formData.append("attachment", blob, "qrcode.png");
       formData.append("to", `${patientsData.email}`); 
       formData.append("subject", "QR Code");
-      formData.append("text", "Here is your QR code.");
+      formData.append("text", "Welcome to the ENT unit of Kolonna Base Hospital.Here is your QR code.");
 
       try {
         const response = await axios.post(
@@ -119,10 +119,10 @@ const QrModal = ({ isOpen, onOpenChange, onOpen, patientID, patientsData }) => {
                     <div className="flex gap-2 flex-col text-sm  justify-center">
                       <div className="flex gap-2">
                         <span>:</span>
-                        <div className="font-semibold">Kolonna</div>
+                        <div className="font-semibold">Kolonna - ENT unit</div>
                       </div>
                       <div className="flex gap-2">
-                        <span>:</span>
+                        <span></span>
                         <div className="">
                           {patientsData.firstName + patientsData.lastName}
                         </div>

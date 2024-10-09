@@ -33,6 +33,9 @@ const Dashboard = () => {
           </Button>
         </div>
         <div className="px-10 mt-2 py-5">
+          <PatientsListAdmin />
+        </div>
+        <div className="px-10 mt-2 py-5">
           <DoctorListAdmin />
         </div>
         <div className="px-10 mt-2 py-5">

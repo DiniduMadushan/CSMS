@@ -1,14 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { CiCalendarDate, CiTimer } from "react-icons/ci";
-import { FaNoteSticky, FaUsers } from "react-icons/fa6";
+import { FaUsers } from "react-icons/fa6";
 import axios from "axios";
 
 const CardStarter = () => {
   const [date, setDate] = useState(getDateTime());
   const [time, setTime] = useState(getTime());
-  const [patientCount, setPatientCount] = useState(0); 
-  const [staffCount, setStaffCount] = useState(0); 
+  const [patientsCount, setPatientsCount] = useState(0);  // State for total patients
+  const [staffCount, setStaffCount] = useState(0);  // State for total staff members
 
+  // Fetch total patients and staff count when the component mounts
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        // Fetch total patients count
+        const patientsResponse = await axios.get("http://localhost:5000/patients");  // Adjust URL if necessary
+        setPatientsCount(patientsResponse.data.patients.length);
+
+        // Fetch total staff count (assuming you have an endpoint for staff)
+        const staffResponse = await axios.get("http://localhost:5000/auth");  // Adjust URL if necessary
+        setStaffCount(staffResponse.data.users.length);
+      } catch (error) {
+        console.error("Error fetching counts:", error);
+      }
+    };
+
+    fetchCounts();
+  }, []);
+
+  // Update time every second
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTime(getTime());
@@ -16,31 +36,6 @@ const CardStarter = () => {
 
     return () => clearInterval(intervalId);
   }, []);
-
-    // Fetch patient count from the backend
-    const fetchPatientCount = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/patients/totalCount");
-        setPatientCount(response.data.totalPatients); // Update patient count
-      } catch (error) {
-        console.error("Error fetching patient count:", error);
-      }
-    };
-  
-    // Fetch staff count from the backend
-    const fetchStaffCount = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/auth/count");
-        setStaffCount(response.data.totalStaff); // Update staff count
-      } catch (error) {
-        console.error("Error fetching staff count:", error);
-      }
-    };
-  
-    useEffect(() => {
-      fetchPatientCount(); // Fetch patient count on component mount
-      fetchStaffCount(); // Fetch staff count on component mount
-    }, []);
 
   function getDateTime() {
     const date = new Date();
@@ -62,6 +57,7 @@ const CardStarter = () => {
     };
     return date.toLocaleTimeString("en-US", options);
   }
+
   return (
     <div className="flex justify-between gap-10">
       <div className="mt-5 flex px-10 py-3 items-center justify-center gap-5 bg-slate-200 rounded-lg">
@@ -82,17 +78,18 @@ const CardStarter = () => {
         <FaUsers size={30} className="text-blue-500" />
         <div className="flex flex-col gap-2">
           <h1 className="font-semibold text-sm">Total Patients</h1>
-          <h2 className="text-gray-700 text-sm">{patientCount}</h2>
+          <h2 className="text-gray-700 text-sm">{patientsCount}</h2>  {/* Display patient count */}
         </div>
       </div>
       <div className="mt-5 flex px-10 py-3 items-center justify-center gap-5 bg-slate-200 rounded-lg">
         <FaUsers size={30} className="text-blue-500" />
         <div className="flex flex-col gap-2">
           <h1 className="font-semibold text-sm">Total staff members</h1>
-          <h2 className="text-gray-700 text-sm">{staffCount}</h2>
+          <h2 className="text-gray-700 text-sm">{staffCount}</h2>  {/* Display staff count */}
         </div>
       </div>
     </div>
   );
 };
+
 export default CardStarter;

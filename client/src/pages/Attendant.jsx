@@ -1,7 +1,6 @@
+
 import {
   Button,
-  Input,
-  Pagination,
   Table,
   TableBody,
   TableCell,
@@ -11,17 +10,15 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import Layout from "../layout/Layout";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
 import axios from "axios";
 import ScanQrModalAttendant from "../modal/ScanQrModalAttendant";
 
 const Attendant = () => {
   const [datac, setData] = useState(null);
-  const [queue, setQueue] = useState([]);
+  const [queue, setQueue] = useState(null); // Initialize as null to handle loading state
   const [refetch, setRefetch] = useState(false);
-  //   console.log(queue[0].queue);
 
   const {
     isOpen: isModalOpen,
@@ -29,7 +26,13 @@ const Attendant = () => {
     onOpenChange: onModalChange,
   } = useDisclosure();
 
+  // Function to add patient to the queue
   const addQueue = async () => {
+    if (!datac || !datac._id) {
+      toast.error("No patient data available to add to the queue.");
+      return;
+    }
+
     try {
       const response = await axios.put(
         `http://localhost:5000/medical-record/queue/${datac._id}`
@@ -37,15 +40,17 @@ const Attendant = () => {
 
       if (response.status === 200) {
         toast.success(response.data.message);
-        console.log(response.data.queue);
         setRefetch(!refetch);
       }
     } catch (error) {
       console.error("Error adding patient to queue:", error);
-      toast.error("Failed to add patient to queue.");
+      toast.error(
+        error.response?.data?.message || "Failed to add patient to queue."
+      );
     }
   };
 
+  // Fetch queue data from the server
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -54,12 +59,11 @@ const Attendant = () => {
         );
 
         if (response.status === 200) {
-          //   console.log(response.data);
           setQueue(response.data);
         }
       } catch (error) {
         console.error("Error fetching queue data:", error);
-        toast.error("Failed to fetch queue data.");
+        // toast.error("");
       }
     };
 
@@ -68,6 +72,7 @@ const Attendant = () => {
 
   return (
     <Layout>
+      {/* Header Section */}
       <div className="flex px-10 justify-between mt-5">
         <div className="flex flex-col items-center justify-between">
           <button
@@ -80,12 +85,15 @@ const Attendant = () => {
         </div>
         <div className="flex flex-col items-center justify-center">
           <div className="">
-            <div className="flex flex-col items-center justify-center w-44 text-center   rounded-lg text-xl p-2 border-2">
-              Patients In The Queue : {queue ? queue[0]?.queue?.length : "0"}
+            <div className="flex flex-col items-center justify-center w-44 text-center rounded-lg text-xl p-2 border-2">
+              Patients In The Queue: {queue ? queue.queue.length : "0"}
             </div>
+           
           </div>
         </div>
       </div>
+
+      {/* Patient Details Section */}
       <div className="flex flex-col mt-10">
         <div className="flex-1 px-5">
           {datac ? (
@@ -129,6 +137,7 @@ const Attendant = () => {
             )}
           </div>
         </div>
+
         <div className="flex justify-center">
           <Button
             className="p-2 border mt-5 px-10 "
@@ -140,14 +149,69 @@ const Attendant = () => {
         </div>
       </div>
 
+
+
+      {/* Scan QR Modal */}
       <ScanQrModalAttendant
         setData={setData}
         isOpen={isModalOpen}
         onOpenChange={onModalChange}
       />
 
-    
+<div className="flex flex-col mt-10 px-10">
+  <h2 className="text-lg font-semibold mb-2">Patients Queue:</h2>
+  {queue && queue.queue && queue.queue.length > 0 ? (
+    <table className="min-w-full border-collapse border border-gray-200">
+      <thead>
+        <tr className="bg-gray-100">
+          <th className="border px-4 py-2 text-center">Queue Position</th>
+          <th className="border px-4 py-2 text-center">Patient Name</th>
+          <th className="border px-4 py-2 text-center">Patient ID Number</th>
+          <th className="border px-4 py-2 text-center">Phone Number</th>
+          <th className="border px-4 py-2 text-center">Added At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {queue.queue.map((qItem, index) => (
+          <tr key={qItem?.item?._id || index} className="bg-white shadow-md">
+            {/* Queue Position */}
+            <td className="border px-4 py-2 text-gray-700 text-base text-center">
+              {index + 1}
+            </td>
+
+            {/* Patient Name */}
+            <td className="border px-4 py-2 text-gray-700 text-base text-center">
+              {qItem?.item?.firstName} {qItem?.item?.lastName}
+            </td>
+
+            {/* Patient ID */}
+            <td className="border px-4 py-2 text-gray-700 text-base text-center">
+              {qItem?.item?.idNumber || 'N/A'}
+            </td>
+
+            {/* Phone Number */}
+            <td className="border px-4 py-2 text-gray-700 text-base text-center">
+              {qItem?.item?.phoneNumber || 'N/A'}
+            </td>
+
+            {/* Added At */}
+            <td className="border px-4 py-2 text-gray-700 text-base text-center">
+              {qItem?.createdAt ? new Date(qItem.createdAt).toLocaleString() : 'N/A'}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <p>Waiting for the patients queue...</p>
+  )}
+</div>
+
+
+
+
     </Layout>
   );
 };
+
 export default Attendant;

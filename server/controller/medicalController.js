@@ -329,39 +329,79 @@ export const nextClinicDate = async (req, res) => {
   }
 };
 
-//add to the queue
+//add patient to the queue
 
 export const addQueue = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; // Patient's ObjectId
 
   try {
     let queue = await Queue.findOne();
 
     if (queue) {
-      if (queue.queue.includes(id)) {
-        // queue.queue.pull(id);
-        // await queue.save();
-        res.json({
-          message: "Patient all ready in queue",
+      // Check if the patient is already in the queue
+      if (queue.queue.some((patient) => patient.item.toString() === id)) {
+        return res.json({
+          message: "Patient already in queue",
           queue,
         });
       } else {
-        queue.queue.push(id);
+        // Add patient with `item` (Patient's ObjectId) and `createdAt` timestamp
+        queue.queue.push({ item: id, createdAt: new Date() });
         await queue.save();
-        res.json({
+        return res.json({
           message: "Patient added to queue",
           queue,
         });
       }
     } else {
-      queue = new Queue({ queue: [id] });
+      // Create new queue if it doesn't exist
+      queue = new Queue({
+        queue: [{ item: id, createdAt: new Date() }],
+      });
       await queue.save();
-      res.json(queue);
+      return res.json({
+        message: "Queue created and patient added",
+        queue,
+      });
     }
   } catch (error) {
+    console.log(error);
     res.status(404).json({ message: error.message });
   }
 };
+
+
+// export const addQueue = async (req, res) => {
+//   const { id } = req.params;
+
+//   try {
+//     let queue = await Queue.findOne();
+
+//     if (queue) {
+//       if (queue.queue.includes(id)) {
+//         // queue.queue.pull(id);
+//         // await queue.save();
+//         res.json({
+//           message: "Patient already in queue",
+//           queue,
+//         });
+//       } else {
+//         queue.queue.push(id);
+//         await queue.save();
+//         res.json({
+//           message: "Patient added to queue",
+//           queue,
+//         });
+//       }
+//     } else {
+//       queue = new Queue({ queue: [id] });
+//       await queue.save();
+//       res.json(queue);
+//     }
+//   } catch (error) {
+//     res.status(404).json({ message: error.message });
+//   }
+// };
 
 //remove from the queue
 export const removeQueue = async (req, res) => {
@@ -399,10 +439,22 @@ export const removeQueue = async (req, res) => {
 //get details from the queue
 export const getQueue = async (req, res) => {
   try {
-    const queue = await Queue.find();
-    res.json(queue);
+    const queue = await Queue.findOne().populate("queue.item"); // Populate the `item` field with patient details
+    queue.queue.forEach((qItem) => {
+      const item = qItem.item; // Assuming item is an object
+      console.log("Patient Name:", item.firstName, item.lastName);
+      console.log("Patient ID:", item.idNumber);
+      console.log("Phone Number:", item.phoneNumber);
+      console.log("Added At:", qItem.createdAt);
+    });
+    if (!queue) {
+      return res.status(404).json({ message: "Queue not found" });
+    }
+
+    res.status(200).json(queue);
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    console.error("Error fetching queue:", error);
+    res.status(500).json({ message: error.message });
   }
 };
 

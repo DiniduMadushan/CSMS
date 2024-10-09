@@ -52,7 +52,7 @@ app.post("/send-email", upload.single("attachment"), (req, res) => {
   const attachment = req.file;
 
   const mailOptions = {
-    from: "isurusajith68@gmail.com",
+    from: "entunit@kolonnBaseHospital.com",
     to,
     subject,
     text,
