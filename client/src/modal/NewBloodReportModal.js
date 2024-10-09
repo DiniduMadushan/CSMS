@@ -66,8 +66,8 @@ const NewBloodReportModal = ({ isOpen, onOpenChange, datac,docName }) => {
                 <div className="flex gap-5">
                   <Textarea
                     autoFocus
-                    label="Blood Report Request"
-                    placeholder="Enter Report description"
+                    label="Lab Test Request"
+                    placeholder="Enter test description"
                     onChange={handleBloodReportChange}
                   />
                 </div>
@@ -77,7 +77,7 @@ const NewBloodReportModal = ({ isOpen, onOpenChange, datac,docName }) => {
                   Clear
                 </Button>
                 <Button color="primary" type="submit" onClick={handleSubmit}>
-                  Add Blood Report
+                  Add test Request
                 </Button>
               </ModalFooter>
             </form>
