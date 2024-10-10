@@ -5,6 +5,8 @@ import React from "react";
 import { useDisclosure } from "@nextui-org/react";
 import ScanQrModal from "../modal/ScanQrModal";
 import ClinicHistoryTable from "../components/ClinicHistoryTable";
+import PrescriptionHistoryTable from "../components/PrescriptionHistoryTable";
+import XrayHistoryTable from "../components/xRayHistoryTable";
 import AddMedicaleRecordModal from "../modal/AddMedicaleRecordModal";
 import AddPrescriptionModal from "../modal/AddPrescriptionModal";
 import AddXrayModal from "../modal/NewXrayModal";
@@ -186,7 +188,14 @@ const DashboardDoctor = () => {
       <div className="flex justify-center">
         <ClinicHistoryTable patientId={datac?._id} />
       </div>
-
+      <div className="flex justify-center">
+        <PrescriptionHistoryTable patientId={datac?._id} />
+      </div>
+      <div className="flex justify-center">
+        <XrayHistoryTable patientId={datac?._id} />
+      </div>
+      
+      
       <ScanQrModal
         setDatac={handleScanSuccess}
         isOpen={isModalOpen}

@@ -7,13 +7,13 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
-  Button,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
   Textarea,
+  Button
 } from "@nextui-org/react";
 import { FaRegEye } from "react-icons/fa6";
 import { useEffect, useMemo, useState } from "react";
@@ -24,9 +24,6 @@ const ClinicHistoryTable = ({ patientId }) => {
   const [clinicHistory, setClinicHistory] = useState([]);
   const [visible, setVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  const [prescriptions, setPrescriptions] = useState([]);
-  const [xrays, setXrays] = useState([]);
-  const [labs, setLabs] = useState([]);
   const rowsPerPage = 6;
 
   // Fetch clinic history based on patientId
@@ -36,7 +33,8 @@ const ClinicHistoryTable = ({ patientId }) => {
         const response = await axios.get(
           `http://localhost:5000/medical-record/medicalhistory/${patientId}`
         );
-        setClinicHistory(response.data); // Assuming response contains the medical records array
+        const sortedHistory = response.data.sort((a, b) => new Date(b.date) - new Date(a.date)); 
+        setClinicHistory(sortedHistory);
       } catch (error) {
         console.error("Error fetching clinic history:", error);
       }
@@ -55,43 +53,20 @@ const ClinicHistoryTable = ({ patientId }) => {
     return clinicHistory.slice(start, end);
   }, [page, clinicHistory]);
 
-  const handleShowMore = async (record) => {
+  const handleShowMore = (record) => {
     setVisible(true);
     setSelectedRecord(record);
-
-    // Fetch related data
-    try {
-      const prescriptionsResponse = await axios.get(
-        `http://localhost:5000/prescriptionhistory/${record.patientId}`
-      );
-      setPrescriptions(prescriptionsResponse.data);
-
-      const xraysResponse = await axios.get(
-        `http://localhost:5000/xrayhistory/${record.patientId}`
-      );
-      setXrays(xraysResponse.data);
-
-      const labsResponse = await axios.get(
-        `http://localhost:5000/labhistory/${record.patientId}`
-      );
-      setLabs(labsResponse.data);
-    } catch (error) {
-      console.error("Error fetching related data:", error);
-    }
   };
 
   const closeHandler = () => {
     setVisible(false);
     setSelectedRecord(null);
-    setPrescriptions([]);
-    setXrays([]);
-    setLabs([]);
   };
 
   return (
     <div className="w-[1000px] mt-2">
       <div className="flex justify-between p-2">
-        <h1 className="text-center mt-2 font-semibold">Patient Clinic History</h1>
+        <h1 className="text-center mt-2 font-semibold">Patient Medical records</h1>
       </div>
       <Table
         aria-label="Patient clinic history table"
@@ -112,6 +87,7 @@ const ClinicHistoryTable = ({ patientId }) => {
         <TableHeader>
           <TableColumn>#</TableColumn>
           <TableColumn>Date of Visit</TableColumn>
+          <TableColumn>Time of Visit</TableColumn>
           <TableColumn>Responsible Doctor</TableColumn>
           <TableColumn>Description</TableColumn>
           <TableColumn>Action</TableColumn>
@@ -121,6 +97,7 @@ const ClinicHistoryTable = ({ patientId }) => {
             <TableRow key={item._id}>
               <TableCell>{index + 1}</TableCell>
               <TableCell>{new Date(item.date).toLocaleDateString()}</TableCell>
+              <TableCell>{new Date(item.date).toLocaleTimeString()}</TableCell>
               <TableCell>{item.docName}</TableCell>
               <TableCell>
                 {item.description.slice(0, 50)}
@@ -146,34 +123,11 @@ const ClinicHistoryTable = ({ patientId }) => {
               Details for {new Date(selectedRecord.date).toLocaleDateString()}
             </ModalHeader>
             <ModalBody>
+              {/* Only displaying the medical record description */}
               <Textarea
                 readOnly
                 label="Medical Record Description"
                 value={selectedRecord.description}
-                minRows={3}
-              />
-
-              {/* Display prescriptions */}
-              <Textarea
-                readOnly
-                label="Prescriptions"
-                value={prescriptions.length > 0 ? prescriptions.map(p => `${p.date}: ${p.prescription}`).join('\n') : 'No prescriptions found.'}
-                minRows={3}
-              />
-
-              {/* Display X-ray requests */}
-              <Textarea
-                readOnly
-                label="X-ray Requests"
-                value={xrays.length > 0 ? xrays.map(x => `${x.date}: ${x.xrayIssued}`).join('\n') : 'No X-ray requests found.'}
-                minRows={3}
-              />
-
-              {/* Display lab report requests */}
-              <Textarea
-                readOnly
-                label="Lab Report Requests"
-                value={labs.length > 0 ? labs.map(l => `${l.date}: ${l.reportRequested}`).join('\n') : 'No lab report requests found.'}
                 minRows={3}
               />
             </ModalBody>

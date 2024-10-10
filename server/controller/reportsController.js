@@ -1,36 +1,37 @@
-import LabResult from "../model/labResult.js"; 
-import mongoose from "mongoose"; 
-import path from "path"; 
+import Lab from "../model/laboratary.js";
+import mongoose from "mongoose";
+import path from "path";
 
-export const uploadLabResult = async (req, res) => { 
-    console.log("Inside file upload"); 
+export const uploadLabResult = async (req, res) => {
+    console.log("Inside file upload");
     
-    const file = req.file; 
-    const { patientId, testDescription, lab_delivered } = req.body; // Destructure lab_delivered from body
+    const file = req.file;
+    const { patientId, report_desc, delivered } = req.body;
 
-    if (!file || !patientId || !testDescription) { 
-        console.log("no data"); 
-        return res.status(400).json({ message: "Missing required fields" }); 
-    } 
+    if (!file || !patientId || !report_desc) {
+        console.log("Missing data");
+        return res.status(400).json({ message: "Missing required fields" });
+    }
 
-    try { 
-        // Save metadata in MongoDB 
-        const newLabResult = new LabResult({ 
-            patientId: new mongoose.Types.ObjectId(patientId), // Use `new` keyword 
-            testDescription, 
-            fileUrl: path.join("uploads", file.filename), // Path to the locally saved file 
-            uploadedAt: new Date(), 
-            lab_delivered: lab_delivered === 'true', // Convert to boolean
-        }); 
+    try {
         
-        await newLabResult.save(); 
-        
-        res.status(201).json({ 
-            message: "Lab result uploaded successfully", 
-            newLabResult, 
-        }); 
-    } catch (error) { 
-        console.error("Error uploading lab result:", error); 
-        res.status(500).json({ message: "Error uploading lab result" }); 
-    } 
+        const existingLab = await Lab.findOne({ patientId: new mongoose.Types.ObjectId(patientId) });
+
+        if (existingLab) {
+            existingLab.report_desc = report_desc;
+            existingLab.pdfUrl = path.join("uploads", file.filename); 
+            existingLab.delivered = delivered === 'true'; 
+            existingLab.date = new Date();
+
+            await existingLab.save();
+
+            res.status(200).json({
+                message: "Lab result updated successfully",
+                existingLab,
+            });
+        } 
+    } catch (error) {
+        console.error("Error uploading lab result:", error);
+        res.status(500).json({ message: "Error uploading lab result" });
+    }
 };
