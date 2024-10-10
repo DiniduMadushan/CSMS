@@ -6,19 +6,18 @@ export const uploadLabResult = async (req, res) => {
     console.log("Inside file upload");
     
     const file = req.file;
-    const { patientId, report_desc, delivered } = req.body;
+    const { labId, delivered } = req.body;
 
-    if (!file || !patientId || !report_desc) {
-        console.log("Missing data");
+    if (!file || !labId) {
         return res.status(400).json({ message: "Missing required fields" });
     }
 
     try {
         
-        const existingLab = await Lab.findOne({ patientId: new mongoose.Types.ObjectId(patientId) });
+        const existingLab = await Lab.findOne({ _id: new mongoose.Types.ObjectId(labId) });
+        console.log(existingLab);
 
         if (existingLab) {
-            existingLab.report_desc = report_desc;
             existingLab.pdfUrl = path.join("uploads", file.filename); 
             existingLab.delivered = delivered === 'true'; 
             existingLab.date = new Date();
@@ -26,7 +25,7 @@ export const uploadLabResult = async (req, res) => {
             await existingLab.save();
 
             res.status(200).json({
-                message: "Lab result updated successfully",
+                message: "Lab result uploaded successfully",
                 existingLab,
             });
         } 

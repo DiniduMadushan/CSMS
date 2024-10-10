@@ -26,7 +26,7 @@ const NewBloodReportModal = ({ isOpen, onOpenChange, datac,docName }) => {
     }
 
     if (!bloodReport) {
-      return toast.error("Blood Report is required");
+      return toast.error("Report request is required");
     }
 
     const bloodReportRequest = {
@@ -41,7 +41,7 @@ const NewBloodReportModal = ({ isOpen, onOpenChange, datac,docName }) => {
     );
     console.log(res);
     if (res.status === 200) {
-      toast.success("Blood Report Request is Added Successfully");
+      toast.success("Report Request is Added Successfully");
       onOpenChange();
     }
   };
@@ -59,7 +59,7 @@ const NewBloodReportModal = ({ isOpen, onOpenChange, datac,docName }) => {
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              New Blood Report
+              Request Lab Report
             </ModalHeader>
             <form>
               <ModalBody>

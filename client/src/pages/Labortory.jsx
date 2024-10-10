@@ -81,9 +81,7 @@ const Laboratory = () => {
     // Prepare FormData     
     const formData = new FormData();     
     formData.append("file", file);     
-    formData.append("patientId", datac._id); // Assuming datac._id is the patient ID     
-    formData.append("report_desc", "Medical Report PDF"); // Modify description if needed     
-    formData.append("reportRequested", "Dr. John Doe"); // Example doctor, modify based on real input
+    formData.append("labId", lab[lab.length - 1]?._id); // Assuming datac._id is the patient ID  
     formData.append("delivered", true); // Mark as delivered
 
     try {       
@@ -196,16 +194,7 @@ const Laboratory = () => {
                   <div className="text-blue-500">{lab[lab.length - 1]?.reportRequested}</div>                   
                   <div className="text-blue-500">{new Date(lab[lab.length - 1]?.date).toLocaleDateString()}</div>                   
                   <div className="text-blue-500">{lab[lab.length - 1]?.report_desc}</div>                   
-                  {lab[lab.length - 1]?.pdfUrl && (                     
-                    <a                       
-                      href={`http://localhost:5000/${lab[lab.length - 1]?.pdfUrl}`}                       
-                      target="_blank"                       
-                      rel="noopener noreferrer"                       
-                      className="text-blue-500 underline"                     
-                    >                       
-                      View Report                     
-                    </a>                   
-                  )}                 
+                                  
                 </div>               
               </div>             
             )}           
@@ -247,50 +236,50 @@ const Laboratory = () => {
             }           
           >             
             <TableHeader>
-    <TableColumn>#</TableColumn> {/* Serial number */}
-    <TableColumn>Requested By (Doctor Name)</TableColumn>
-    <TableColumn>Date</TableColumn>
-    <TableColumn>Time</TableColumn>
-    <TableColumn>Description</TableColumn>
-    <TableColumn>View Report</TableColumn>
-</TableHeader>
+                <TableColumn>#</TableColumn> {/* Serial number */}
+                <TableColumn>Requested By (Doctor Name)</TableColumn>
+                <TableColumn>Date</TableColumn>
+                <TableColumn>Time</TableColumn>
+                <TableColumn>Description</TableColumn>
+                <TableColumn>Action</TableColumn>
+            </TableHeader>
 
-<TableBody>
-    {items.map((item, index) => (
-        <TableRow key={index}>
-            {/* Serial number */}
-            <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell> 
+            <TableBody>
+                {items.map((item, index) => (
+                    <TableRow key={index}>
+                        {/* Serial number */}
+                        <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell> 
 
-            {/* Requested by (Doctor's Name) */}
-            <TableCell>{item.reportRequested}</TableCell> 
+                        {/* Requested by (Doctor's Name) */}
+                        <TableCell>{item.reportRequested}</TableCell> 
 
-            {/* Date */}
-            <TableCell>{new Date(item.date).toLocaleDateString()}</TableCell>
+                        {/* Date */}
+                        <TableCell>{new Date(item.date).toLocaleDateString()}</TableCell>
 
-            {/* Time */}
-            <TableCell>{new Date(item.date).toLocaleTimeString()}</TableCell> 
+                        {/* Time */}
+                        <TableCell>{new Date(item.date).toLocaleTimeString()}</TableCell> 
 
-            {/* Description */}
-            <TableCell>{item.report_desc}</TableCell> 
+                        {/* Description */}
+                        <TableCell>{item.report_desc}</TableCell> 
 
-            {/* View Report */}
-            <TableCell>
-                {item.pdfUrl ? (
-                    <a
-                        href={`http://localhost:5000/${item.pdfUrl}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 underline"
-                    >
-                        View Report
-                    </a>
-                ) : (
-                    "No report available"
-                )}
-            </TableCell>
-        </TableRow>
-    ))}
-</TableBody>
+                        {/* View Report */}
+                        <TableCell>
+                            {item.pdfUrl ? (
+                                <a
+                                    href={`http://localhost:5000/${item.pdfUrl}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-500"
+                                >
+                                    View Report
+                                </a>
+                            ) : (
+                                "No report available"
+                            )}
+                        </TableCell>
+                    </TableRow>
+                ))}
+            </TableBody>
        
           </Table>         
         </div>       
