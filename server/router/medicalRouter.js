@@ -37,7 +37,7 @@ medicalRouter.post("/lab", createLabReport);
 medicalRouter.get("/lab/:patientid", getLabReport);
 medicalRouter.put("/lab/delivered/:id", updateLabReport);
 medicalRouter.put("/queue/:id", addQueue);
-medicalRouter.put("/rm/queue/:id", removeQueue);
+medicalRouter.delete("/rm/queue/:id", removeQueue);
 medicalRouter.get("/queue/get", getQueue);
 // medicalRouter.get("/prescriptionhistory/:patientid", getPrescriptionHistoryByPatientId);
 // medicalRouter.get("/xrayhistory/:patientid", getXrayHistoryByPatientId);

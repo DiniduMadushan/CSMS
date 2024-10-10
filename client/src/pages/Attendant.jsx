@@ -17,7 +17,7 @@ import ScanQrModalAttendant from "../modal/ScanQrModalAttendant";
 
 const Attendant = () => {
   const [datac, setData] = useState(null);
-  const [queue, setQueue] = useState(null); // Initialize as null to handle loading state
+  const [queue, setQueue] = useState(null); 
   const [refetch, setRefetch] = useState(false);
 
   const {

@@ -45,7 +45,7 @@ const AddMedicaleRecordModal = ({ isOpen, onOpenChange, datac, docName }) => {
 
       if (res.status === 201) {
         toast.success("Medical Record Added Successfully");
-        removeQueue(datac._id); // Remove patient from queue
+        // removeQueue(datac._id); 
         onOpenChange(); // Close the modal
       }
     } catch (error) {
@@ -54,21 +54,21 @@ const AddMedicaleRecordModal = ({ isOpen, onOpenChange, datac, docName }) => {
     }
   };
 
-  const removeQueue = async (id) => {
-    try {
-      const response = await axios.put(
-        `http://localhost:5000/medical-record/rm/queue/${id}`
-      );
+  // const removeQueue = async (id) => {
+  //   try {
+  //     const response = await axios.put(
+  //       `http://localhost:5000/medical-record/rm/queue/${id}`
+  //     );
 
-      if (response.status === 200) {
-        toast.success(response.data.message);
-        console.log(response.data.queue);
-      }
-    } catch (error) {
-      console.error("Error removing patient from queue:", error);
-      toast.error("Failed to remove patient from queue.");
-    }
-  };
+  //     if (response.status === 200) {
+  //       toast.success(response.data.message);
+  //       console.log(response.data.queue);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error removing patient from queue:", error);
+  //     toast.error("Failed to remove patient from queue.");
+  //   }
+  // };
 
   return (
     <Modal

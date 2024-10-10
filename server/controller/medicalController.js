@@ -371,73 +371,43 @@ export const addQueue = async (req, res) => {
 };
 
 
-// export const addQueue = async (req, res) => {
-//   const { id } = req.params;
-
-//   try {
-//     let queue = await Queue.findOne();
-
-//     if (queue) {
-//       if (queue.queue.includes(id)) {
-//         // queue.queue.pull(id);
-//         // await queue.save();
-//         res.json({
-//           message: "Patient already in queue",
-//           queue,
-//         });
-//       } else {
-//         queue.queue.push(id);
-//         await queue.save();
-//         res.json({
-//           message: "Patient added to queue",
-//           queue,
-//         });
-//       }
-//     } else {
-//       queue = new Queue({ queue: [id] });
-//       await queue.save();
-//       res.json(queue);
-//     }
-//   } catch (error) {
-//     res.status(404).json({ message: error.message });
-//   }
-// };
 
 //remove from the queue
 export const removeQueue = async (req, res) => {
   const { id } = req.params;
-
   try {
     let queue = await Queue.findOne();
 
     if (queue) {
-      if (queue.queue.includes(id)) {
-        queue.queue.pull(id);
+      const patientIndex = queue.queue.findIndex((patient) => patient.item.toString() === id);
+      
+      if (patientIndex !== -1) {
+        queue.queue.splice(patientIndex, 1);
         await queue.save();
-        res.json({
+
+        return res.json({
           message: "Patient removed from queue",
           queue,
         });
       } else {
-        // queue.queue.push(id);
-        // await queue.save();
-        res.json({
-          message: "Patient removed from queue",
+        return res.json({
+          message: "Patient not found in queue",
           queue,
         });
       }
     } else {
-      queue = new Queue({ queue: [id] });
-      await queue.save();
-      res.json(queue);
+      return res.status(404).json({ message: "No queue found" });
     }
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
 };
 
+
 //get details from the queue
 export const getQueue = async (req, res) => {
+  console.log("inside get queue");
+  
   try {
     const queue = await Queue.findOne().populate("queue.item"); // Populate the `item` field with patient details
     queue.queue.forEach((qItem) => {

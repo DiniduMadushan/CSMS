@@ -10,6 +10,7 @@ import AddPrescriptionModal from "../modal/AddPrescriptionModal";
 import AddXrayModal from "../modal/NewXrayModal";
 import NewBloodReportModal from "../modal/NewBloodReportModal";
 import ClinicDateModal from "../modal/ClinicDateModal";
+import axios from "axios"; // Import axios for making API calls
 
 const DashboardDoctor = () => {
   const [datac, setDatac] = useState(null);
@@ -51,27 +52,40 @@ const DashboardDoctor = () => {
     onOpenChange: onClinicDateChange,
   } = useDisclosure();
 
-    // Retrieve the doctor_name from localStorage on component mount
-    useEffect(() => {
-      const storedDoctorName = localStorage.getItem("username");
-      if (storedDoctorName) {
-        setDocName(storedDoctorName);
+  // Retrieve the doctor_name from localStorage on component mount
+  useEffect(() => {
+    const storedDoctorName = localStorage.getItem("username");
+    if (storedDoctorName) {
+      setDocName(storedDoctorName);
+    }
+  }, []);
+
+  // Function to remove patient from queue after successful scan
+  const removePatientFromQueue = async (patientId) => {
+    try {
+      const response = await axios.delete(`http://localhost:5000/medical-record/rm/queue/${patientId}`);
+      if (response.data.message === "Patient removed from queue") {
+        console.log("Patient successfully removed from queue");
       }
-    }, []);
+    } catch (error) {
+      console.error("Error removing patient from queue:", error);
+    }
+  };
+
+  // Function to handle scanning and removing patient from queue
+  const handleScanSuccess = (scannedData) => {
+    setDatac(scannedData);
+    if (scannedData?._id) {
+      removePatientFromQueue(scannedData._id);
+    }
+  };
 
   return (
     <Layout>
       <div className="flex justify-start flex-col items-start">
         <div className="flex flex-col items-center justify-center">
           <div className="mt-2">
-            {/* {scan && (
-              <QrReader
-                delay={300}
-                onError={handleError}
-                onScan={handleScan}
-                style={{ width: "150px" }}
-              />
-            )} */}
+            {/* Scan QR functionality can be added here */}
           </div>
           <button
             className="bg-blue-700 rounded-lg w-28 mt-5 hover:bg-blue-900 text-white h-10 p-2 "
@@ -82,16 +96,17 @@ const DashboardDoctor = () => {
           </button>
         </div>
       </div>
+
       <div className="flex py-5">
         <div className="flex-1 px-5">
           {datac && (
-            <h1 className="text-xl  font-semibold text-center mt-1">
+            <h1 className="text-xl font-semibold text-center mt-1">
               Patient Details
             </h1>
           )}
           {!datac && (
-            <div className="border rounded-lg  h-60">
-              <h1 className="text-2xl  font-semibold text-center mt-5">
+            <div className="border rounded-lg h-60">
+              <h1 className="text-2xl font-semibold text-center mt-5">
                 Patient Details
               </h1>
               <h1 className="text-red-500 text-sm mt-10 text-center">
@@ -99,9 +114,10 @@ const DashboardDoctor = () => {
               </h1>
             </div>
           )}
+
           <div className="flex mt-2 items-center justify-center">
             {datac && (
-              <div className="flex w-[520px] gap-10 p-4 rounded-lg border  items-center ">
+              <div className="flex w-[520px] gap-10 p-4 rounded-lg border items-center ">
                 <div className="flex flex-col gap-2 ml-10">
                   <h1 className="">Patient Name :</h1>
                   <h1 className="">Id Number :</h1>
@@ -113,7 +129,6 @@ const DashboardDoctor = () => {
 
                 <div className="flex flex-col gap-2">
                   <div className="text-blue-500">
-                    {" "}
                     {datac.firstName + " " + datac.lastName}
                   </div>
                   <div className="text-blue-500">{datac.idNumber}</div>
@@ -128,7 +143,8 @@ const DashboardDoctor = () => {
             )}
           </div>
         </div>
-        <div className=" flex-1 justify-center flex mt-1 ">
+
+        <div className="flex-1 justify-center flex mt-1">
           <div className="flex flex-col gap-3">
             <button
               onClick={openAddMedicaleRecord}
@@ -166,11 +182,13 @@ const DashboardDoctor = () => {
           </div>
         </div>
       </div>
+
       <div className="flex justify-center">
         <ClinicHistoryTable patientId={datac?._id} />
       </div>
+
       <ScanQrModal
-        setDatac={setDatac}
+        setDatac={handleScanSuccess}
         isOpen={isModalOpen}
         onOpenChange={onModalChange}
       />
@@ -199,7 +217,7 @@ const DashboardDoctor = () => {
         isOpen={isBloodOpen}
         onOpenChange={onBloodChange}
         datac={datac}
-        docName={doc_name} 
+        docName={doc_name}
       />
 
       <ClinicDateModal

@@ -58,7 +58,8 @@ const AddStaffModel = ({ isOpen, onOpenChange }) => {
       console.log("Response:", res); // Log the response to check its status and data
 
       if (res.status === 201) {
-        toast.success("Staff member added successfully!.check inbox for the login password",{duration:5000});
+        toast.success("Staff member added successfully.login credentials has been sent.",{duration:5000});
+        
         setGlobalRefetch(true);
         onOpenChange(false);
         reset();
