@@ -13,6 +13,7 @@ import AddXrayModal from "../modal/NewXrayModal";
 import NewBloodReportModal from "../modal/NewBloodReportModal";
 import ClinicDateModal from "../modal/ClinicDateModal";
 import axios from "axios"; // Import axios for making API calls
+import LabHistoryTable from "../components/LabHistoryTable";
 
 const DashboardDoctor = () => {
   const [datac, setDatac] = useState(null);
@@ -194,6 +195,10 @@ const DashboardDoctor = () => {
       <div className="flex justify-center">
         <XrayHistoryTable patientId={datac?._id} />
       </div>
+      <div className="flex justify-center">
+        <LabHistoryTable patientId={datac?._id} />
+      </div>      
+
       
       
       <ScanQrModal

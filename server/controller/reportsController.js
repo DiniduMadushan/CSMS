@@ -34,3 +34,19 @@ export const uploadLabResult = async (req, res) => {
         res.status(500).json({ message: "Error uploading lab result" });
     }
 };
+
+export const getLabResultsByPatientId = async (req, res) => {
+    const { patientId } = req.params;
+  
+    try {
+      const labResults = await Lab.find({ patientId: new mongoose.Types.ObjectId(patientId) }).sort({ date: -1 });
+      if (!labResults.length) {
+        return res.status(404).json({ message: "No lab results found for this patient" });
+      }
+  
+      res.status(200).json(labResults);
+    } catch (error) {
+      console.error("Error fetching lab results:", error);
+      res.status(500).json({ message: "Error fetching lab results" });
+    }
+  };
