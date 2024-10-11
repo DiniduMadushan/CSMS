@@ -37,7 +37,7 @@ export const uploadLabResult = async (req, res) => {
 
 export const getLabResultsByPatientId = async (req, res) => {
     const { patientId } = req.params;
-  
+    console.log("inside")
     try {
       const labResults = await Lab.find({ patientId: new mongoose.Types.ObjectId(patientId) }).sort({ date: -1 });
       if (!labResults.length) {

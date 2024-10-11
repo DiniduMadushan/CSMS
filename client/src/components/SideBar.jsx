@@ -232,7 +232,7 @@ const SideBar = () => {
           Logout
         </button>
         <h1 className="text-center mt-4 text-gray-500 text-sm">
-          © 2021 ENT Unit
+          © 2024 ENT Unit
         </h1>
       </div>
       <FeedBackModal

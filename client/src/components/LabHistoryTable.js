@@ -22,7 +22,7 @@ import {
       const fetchLabHistory = async () => {
         try {
           const response = await axios.get(
-            `http://localhost:5000/lab-results/${patientId}`
+            `http://localhost:5000/reports/lab-results/${patientId}`
           );
           const sortedHistory = response.data.sort(
             (a, b) => new Date(b.date) - new Date(a.date)

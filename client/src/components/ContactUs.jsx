@@ -1,4 +1,28 @@
+import React, { useRef } from 'react';
+import emailjs from '@emailjs/browser';
+import toast from "react-hot-toast";
+
 const ContactUs = () => {
+  const form = useRef();
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    emailjs
+      .sendForm('service_ww9j9kk', 'template_dn076dm', form.current, 'BnBCEZsiLU35Ijln7')
+      .then(
+        () => {
+          console.log('SUCCESS!');
+          toast.success('Message has been sent successfully!');
+          form.current.reset();
+        },
+        (error) => {
+          console.log('FAILED...', error.text);
+          toast.error('Message failed to send. Please try again.');
+        }
+      );
+  };
+
   return (
     <div id="contact" className="bg-green-700">
       <div className="py-5 px-32 flex">
@@ -7,27 +31,34 @@ const ContactUs = () => {
           <p className="mt-2 font-bold text-white">
             We provide the best health care services
           </p>
-          <div className="flex">
-            <div className="flex flex-1 flex-col flex-wrap justify-center">
-              <input
-                type="text"
-                placeholder="Name"
-                className="w-[400px] h-[40px] mt-5 rounded-md p-2"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                className="w-[400px] h-[40px] mt-5 rounded-md p-2"
-              />
-              <textarea
-                placeholder="Message"
-                className="w-[400px] h-[100px] mt-5 rounded-md p-2"
-              ></textarea>
-              <button className="w-[200px] bg-white text-green-500 mt-5 px-5 py-2 rounded-md">
-                Send Message
-              </button>
-            </div>
-          </div>
+          <form ref={form} onSubmit={sendEmail} className="flex flex-col mt-5">
+            <input
+              type="text"
+              name="from_name"
+              placeholder="Name"
+              className="w-[400px] h-[40px] mt-5 rounded-md p-2"
+              required
+            />
+            <input
+              type="email"
+              name="user_email"
+              placeholder="Email"
+              className="w-[400px] h-[40px] mt-5 rounded-md p-2"
+              required
+            />
+            <textarea
+              name="message"
+              placeholder="Message"
+              className="w-[400px] h-[100px] mt-5 rounded-md p-2"
+              required
+            ></textarea>
+            <button
+              type="submit"
+              className="w-[200px] bg-white text-green-500 mt-5 px-5 py-2 rounded-md"
+            >
+              Send Message
+            </button>
+          </form>
         </div>
         <div className="flex-1">
           <iframe
