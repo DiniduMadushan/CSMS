@@ -16,6 +16,9 @@ import {
   updateLabReport,
   updateMedicalXray,
   getPrescriptionHistoryByPatientId,
+  // addXrayQueue,
+  // removeXrayQueue,
+  // getXrayQueue,
 } from "../controller/medicalController.js";
 
 
@@ -37,7 +40,9 @@ medicalRouter.put("/lab/delivered/:id", updateLabReport);
 medicalRouter.put("/queue/:id", addQueue);
 medicalRouter.delete("/rm/queue/:id", removeQueue);
 medicalRouter.get("/queue/get", getQueue);
-// medicalRouter.get("/descriptions/:patientId", getMedicalDescriptionsByDate);
-// medicalRouter.get("/prescriptions/:patientId", getPrescriptionsByDate);
+// medicalRouter.put("/xrayqueue/:id", addXrayQueue);
+// medicalRouter.delete("/rm/xrayqueue/:id", removeXrayQueue);
+// medicalRouter.get("/xrayqueue/get", getXrayQueue);
+
 
 export default medicalRouter;

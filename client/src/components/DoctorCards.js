@@ -19,7 +19,7 @@ const CardStarter = () => {
         setPatientsCount(patientsResponse.data.patients.length);
 
         // Fetch total queue count
-        const queueResponse = await axios.get("http://localhost:5000/queue"); 
+        const queueResponse = await axios.get("http://localhost:5000/medical-record/queue/get"); 
         setQueueCount(queueResponse.data.queue.length);
 
       } catch (error) {

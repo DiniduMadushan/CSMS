@@ -1,9 +1,9 @@
 import Layout from "../layout/Layout";
 import { useState, useEffect } from "react";
-import QrReader from "react-qr-scanner";
-import React from "react";
-import DoctorCards from "../components/DoctorCards"
+import axios from "axios";
 import { useDisclosure } from "@nextui-org/react";
+
+import DoctorCards from "../components/DoctorCards";
 import ScanQrModal from "../modal/ScanQrModal";
 import ClinicHistoryTable from "../components/ClinicHistoryTable";
 import PrescriptionHistoryTable from "../components/PrescriptionHistoryTable";
@@ -13,12 +13,12 @@ import AddPrescriptionModal from "../modal/AddPrescriptionModal";
 import AddXrayModal from "../modal/NewXrayModal";
 import NewBloodReportModal from "../modal/NewBloodReportModal";
 import ClinicDateModal from "../modal/ClinicDateModal";
-import axios from "axios"; // Import axios for making API calls
 import LabHistoryTable from "../components/LabHistoryTable";
 
 const DashboardDoctor = () => {
   const [datac, setDatac] = useState(null);
   const [doc_name, setDocName] = useState(null);
+  const [refetch, setRefetch] = useState(false); // State to trigger refetching
 
   const {
     isOpen: isModalOpen,
@@ -67,7 +67,9 @@ const DashboardDoctor = () => {
   // Function to remove patient from queue after successful scan
   const removePatientFromQueue = async (patientId) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/medical-record/rm/queue/${patientId}`);
+      const response = await axios.delete(
+        `http://localhost:5000/medical-record/rm/queue/${patientId}`
+      );
       if (response.data.message === "Patient removed from queue") {
         console.log("Patient successfully removed from queue");
       }
@@ -82,13 +84,16 @@ const DashboardDoctor = () => {
     if (scannedData?._id) {
       removePatientFromQueue(scannedData._id);
     }
+    // Toggle refetch to trigger DoctorCards to refetch data
+    setRefetch(!refetch);
   };
 
   return (
     <Layout>
       <div className="flex justify-start flex-col items-start">
-      <div className=" ">
-          <DoctorCards />
+        <div className="">
+          {/* Pass the refetch prop to DoctorCards */}
+          <DoctorCards refetch={refetch} />
         </div>
         <div className="flex flex-col items-center justify-center">
           <div className="mt-2">
@@ -201,10 +206,8 @@ const DashboardDoctor = () => {
       </div>
       <div className="flex justify-center">
         <LabHistoryTable patientId={datac?._id} />
-      </div>      
+      </div>
 
-      
-      
       <ScanQrModal
         setDatac={handleScanSuccess}
         isOpen={isModalOpen}
