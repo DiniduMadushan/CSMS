@@ -2,6 +2,7 @@ import Layout from "../layout/Layout";
 import { useState, useEffect } from "react";
 import QrReader from "react-qr-scanner";
 import React from "react";
+import DoctorCards from "../components/DoctorCards"
 import { useDisclosure } from "@nextui-org/react";
 import ScanQrModal from "../modal/ScanQrModal";
 import ClinicHistoryTable from "../components/ClinicHistoryTable";
@@ -86,6 +87,9 @@ const DashboardDoctor = () => {
   return (
     <Layout>
       <div className="flex justify-start flex-col items-start">
+      <div className=" ">
+          <DoctorCards />
+        </div>
         <div className="flex flex-col items-center justify-center">
           <div className="mt-2">
             {/* Scan QR functionality can be added here */}
