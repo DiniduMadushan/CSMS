@@ -2,33 +2,31 @@ import React, { useEffect, useState } from "react";
 import { CiCalendarDate, CiTimer } from "react-icons/ci";
 import { FaUsers } from "react-icons/fa6";
 import axios from "axios";
-import toast from "react-hot-toast"; // Assuming you're using react-hot-toast for notifications
 
-const CardStarter = () => {
+const CardStarter = ({ refetch }) => {  // Accept refetch prop
   const [date, setDate] = useState(getDateTime());
   const [time, setTime] = useState(getTime());
-  const [patientsCount, setPatientsCount] = useState(0);  // State for total patients
-  const [queueCount, setQueueCount] = useState(0);  // State for total patients in queue
+  const [patientsCount, setPatientsCount] = useState(0); // State for total patients
+  const [queueCount, setQueueCount] = useState(0); // State for total patients in queue
 
-  // Fetch total patients and queue count when the component mounts
+  // Fetch total patients and queue count, now dependent on refetch prop
   useEffect(() => {
     const fetchCounts = async () => {
       try {
         // Fetch total patients count
-        const patientsResponse = await axios.get("http://localhost:5000/patients"); 
+        const patientsResponse = await axios.get("http://localhost:5000/patients");
         setPatientsCount(patientsResponse.data.patients.length);
 
         // Fetch total queue count
-        const queueResponse = await axios.get("http://localhost:5000/medical-record/queue/get"); 
+        const queueResponse = await axios.get("http://localhost:5000/medical-record/queue/get");
         setQueueCount(queueResponse.data.queue.length);
-
       } catch (error) {
         console.error("Error fetching counts:", error);
       }
     };
 
     fetchCounts();
-  }, []);
+  }, [refetch]);  // Re-fetch data when refetch changes
 
   // Update time every second
   useEffect(() => {
