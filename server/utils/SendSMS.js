@@ -70,7 +70,7 @@ export const sendSmsStaffPassword = async (username, phoneNumber, email) => {
 };
 
 export const xRayDeliveredSms = async (firstName, lastName, phoneNumber) => {
-  const message = `Dear ${firstName} ${lastName}, Your Xray has been delivered. Please collect it from the hospital.`;
+  const message = `Dear ${firstName} ${lastName}, Your Xray is ready. Please collect it from the Radiology unit ref no:67echbey.`;
 
   const phone = validPhoneNumber(phoneNumber);
 
