@@ -7,6 +7,7 @@ import {
   ModalHeader,
 } from "@nextui-org/react";
 import axios from "axios";
+import toast from "react-hot-toast"; // Import toast
 
 const DeletePatientModel = ({
   isOpen,
@@ -19,9 +20,11 @@ const DeletePatientModel = ({
     if (selectedPatientId) {
       try {
         axios.delete(`http://localhost:5000/patients/${selectedPatientId}`);
+        toast.success("Patient deleted successfully!"); // Show success notification
         setSelectedPatientId(null);
         setRefetch(true);
       } catch (error) {
+        toast.error("Failed to delete patient."); // Show error notification
         console.log(error);
       }
     }
@@ -45,7 +48,7 @@ const DeletePatientModel = ({
             </ModalHeader>
             <ModalBody>
               <div>
-                if you delete this patient, all the information will be lost
+                If you delete this patient, all the information will be lost.
               </div>
             </ModalBody>
             <ModalFooter>
@@ -67,4 +70,5 @@ const DeletePatientModel = ({
     </Modal>
   );
 };
+
 export default DeletePatientModel;

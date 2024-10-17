@@ -16,6 +16,8 @@ import {
   updateLabReport,
   updateMedicalXray,
   getPrescriptionHistoryByPatientId,
+  getTodayPrescriptionCount,
+  getTodayRegisteredCount,
   // addXrayQueue,
   // removeXrayQueue,
   // getXrayQueue,
@@ -40,6 +42,7 @@ medicalRouter.put("/lab/delivered/:id", updateLabReport);
 medicalRouter.put("/queue/:id", addQueue);
 medicalRouter.delete("/rm/queue/:id", removeQueue);
 medicalRouter.get("/queue/get", getQueue);
-
+medicalRouter.get("/prescriptions/today", getTodayPrescriptionCount);
+medicalRouter.get("/registrations/today", getTodayRegisteredCount);
 
 export default medicalRouter;

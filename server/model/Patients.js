@@ -33,6 +33,9 @@ const PatientsSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  registrationDate: { 
+    type: Date, default: Date.now 
+  },
 });
 
 const Patients = mongoose.model("Patients", PatientsSchema);

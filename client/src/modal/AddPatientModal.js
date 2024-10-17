@@ -49,6 +49,7 @@ const AddPatientModel = ({ isOpen, onOpenChange, setRefetch }) => {
     onOpen: openQr,
     onOpenChange: onQrChange,
   } = useDisclosure();
+  
   const {
     register,
     handleSubmit,
@@ -62,17 +63,20 @@ const AddPatientModel = ({ isOpen, onOpenChange, setRefetch }) => {
   const onSubmit = async (data) => {
     try {
       const res = await axios.post("http://localhost:5000/patients", data);
-      // console.log(res.data);
-
+      
+      // Set the QR ID and patient data
       setQrId(res.data.patient._id);
       setPatientsData(res.data.patient);
       setRefetch(true);
       openQr();
 
-      // console.log(res.data);
+      // Show success toast
+      toast.success("Patient registered successfully!"); // Success toast
     } catch (error) {
       if (error?.response) {
-       toast.error(error.response.data.message);
+        toast.error(error.response.data.message); // Error toast
+      } else {
+        toast.error("An error occurred while registering the patient."); // General error toast
       }
     }
   };
@@ -216,4 +220,5 @@ const AddPatientModel = ({ isOpen, onOpenChange, setRefetch }) => {
     </Modal>
   );
 };
+
 export default AddPatientModel;

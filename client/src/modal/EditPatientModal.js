@@ -17,6 +17,7 @@ import * as yup from "yup";
 import { bloodGroups } from "../data/bloodGroups";
 import axios from "axios";
 import { useGlobalRefetch } from "../store/store";
+import toast from "react-hot-toast"; // Import toast for notifications
 
 const schema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
@@ -53,17 +54,21 @@ const EditPatientModel = ({
   } = useForm({
     resolver: yupResolver(schema),
   });
- const { setGlobalRefetch } = useGlobalRefetch();
+
+  const { setGlobalRefetch } = useGlobalRefetch();
+
   const onSubmit = async (data) => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/auth/${selectedPatient._id}`,
+        `http://localhost:5000/patients/${selectedPatient._id}`,
         data
       );
+      toast.success("Patient updated successfully!"); // Show success notification
       setGlobalRefetch((prev) => !prev);
       setSelectedPatient(null);
       setSelectedPatient(res.data.patient);
     } catch (error) {
+      toast.error("Failed to update patient."); // Show error notification
       console.log(error);
     }
 
@@ -195,4 +200,5 @@ const EditPatientModel = ({
     </Modal>
   );
 };
+
 export default EditPatientModel;

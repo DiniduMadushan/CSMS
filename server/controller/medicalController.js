@@ -469,3 +469,54 @@ export const getLabHistoryByPatientId= async (req, res) => {
   }
 };
 
+//get todayprescriptions count
+
+export const getTodayPrescriptionCount = async (req, res) => {
+  
+  try {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0); 
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999); 
+
+    
+    const prescriptionCount = await PrescriptionList.countDocuments({
+      date: { $gte: startOfDay, $lt: endOfDay },
+    });
+
+    res.status(200).json({
+      count: prescriptionCount,
+    });
+  } catch (error) {
+    console.error("Error fetching today's prescriptions:", error);
+    res.status(500).json({ message: "Failed to fetch today's prescriptions." });
+  }
+};
+
+// get the count of total patients registered today
+
+export const getTodayRegisteredCount = async (req, res) => {
+  console.log("inside reg");
+  
+  try {
+    
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999); 
+   
+    const count = await Patient.countDocuments({
+      registrationDate: { $gte: startOfDay, $lt: endOfDay },
+    });
+
+    console.log(count); 
+
+    res.status(200).json({ count }); 
+  } catch (error) {
+    console.error("Error fetching registered patients:", error);
+    res.status(500).json({ message: "Failed to fetch registered patients." });
+  }
+};
+
+

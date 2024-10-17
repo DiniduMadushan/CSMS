@@ -5,6 +5,7 @@ import ScanQrModalParamarcy from "../components/ScanQrModalParamarcy";
 import axios from "axios";
 import PrintModel from "../modal/PrintModel";
 import PrescriptionHistoryTable from "../components/PrescriptionHistoryTable";
+import PharmacyCards from "../components/PhamacyCards";
 
 const DashboardPharmacy = () => {
   const [datac, setData] = useState(null); // Patient data from QR code
@@ -92,6 +93,9 @@ const DashboardPharmacy = () => {
 
   return (
     <Layout>
+    <div className="">
+          <PharmacyCards />
+        </div>
       <div className="flex px-10">
         <div className="flex flex-col items-center justify-center">
           <button

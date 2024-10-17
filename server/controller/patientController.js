@@ -70,23 +70,15 @@ export const createPatient = async (req, res) => {
 };
 
 export const updatePatient = async (req, res) => {
+  
   try {
     const { id } = req.params;
 
     const patient = await Patients.findById(id);
-    console.log(patient);
     if (!patient) {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    // patient.firstName = firstName || patient.firstName;
-    // patient.lastName = lastName || patient.lastName;
-    // patient.idNumber = idNumber || patient.idNumber;
-    // patient.phoneNumber = phoneNumber || patient.phoneNumber;
-    // patient.email = email || patient.email;
-    // patient.dob = dob || patient.dob;
-    // patient.bloodGroup = bloodGroup || patient.bloodGroup;
-    // patient.address = address || patient.address;
 
     if (patient) {
       patient.firstName = req.body.firstName;
