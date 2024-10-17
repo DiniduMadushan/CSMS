@@ -441,6 +441,9 @@ export const getPrescriptionHistoryByPatientId = async (req, res) => {
   }
 };
 
+
+//get the relevant patient xray history
+
 export const getXrayHistoryByPatientId = async (req, res) => {
   const { patientId } = req.params;
   const { date } = req.query;

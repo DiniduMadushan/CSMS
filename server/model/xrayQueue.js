@@ -1,29 +1,32 @@
+// models/XrayQueue.js
 import mongoose from "mongoose";
 
-const xrayQueueSchema = new mongoose.Schema({
-  patientId: {
+// Define the schema for each item in the X-ray queue
+const XrayQueueItemSchema = new mongoose.Schema({
+  item: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Patients",
+    ref: "Xray", // Assuming you have a separate Xray model
     required: true,
   },
-  firstName: {
-    type: String,
+  patient: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Patient", // Reference to the Patient model
     required: true,
   },
-  lastName: {
-    type: String,
-    required: true,
-  },
-  phoneNumber: {
-    type: String,
-    required: true,
-  },
-  addedAt: {
+  createdAt: {
     type: Date,
     default: Date.now,
   },
 });
 
-const XrayQueue = mongoose.model("XrayQueue", xrayQueueSchema);
+// Define the main X-ray Queue schema
+const XrayQueueSchema = new mongoose.Schema({
+  queue: {
+    type: [XrayQueueItemSchema], // Array of XrayQueueItem objects
+    required: true,
+  },
+});
 
-module.exports = XrayQueue;
+// Create and export the X-ray Queue model
+const XrayQueue = mongoose.model("XrayQueue", XrayQueueSchema);
+export default XrayQueue;

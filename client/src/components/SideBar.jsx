@@ -26,7 +26,7 @@ const SideBar = () => {
 
   const logOut = () => {
     localStorage.removeItem("authUser");
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   const {

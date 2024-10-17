@@ -10,6 +10,10 @@ const FeedbackSchema = new mongoose.Schema({
   feedback: {
     type: String,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
   image : {
     type: String,
   }

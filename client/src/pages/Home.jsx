@@ -85,6 +85,7 @@ const Home = () => {
           Feedback
         </h1>
       </div>
+     
       <div className="flex w-full items-center justify-center p-4">
         <div className="container ">
           <Review />

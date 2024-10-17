@@ -216,7 +216,7 @@ const Radiology = () => {
           </div>
           <div className="w-full flex justify-center mt-10">
             <Button onClick={() => deliverdXray()} color="danger">
-              Delivered Xray
+              Xray is ready
             </Button>
           </div>
         </div>
@@ -273,7 +273,7 @@ const Radiology = () => {
 
       {/* <PrintModel
         isOpen={isPrintModalOpen}
-        onOpenChange={onPrintModalChange}
+        onOpenChange={onPrintModalChange}z
         unavailableDrugs={unavailableDrugs}
       /> */}
     </Layout>

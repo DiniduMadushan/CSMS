@@ -1,4 +1,3 @@
-
 import {
   Button,
   Table,
@@ -16,9 +15,9 @@ import axios from "axios";
 import ScanQrModalAttendant from "../modal/ScanQrModalAttendant";
 
 const Attendant = () => {
-  const [datac, setData] = useState(null);
-  const [queue, setQueue] = useState(null); 
-  const [refetch, setRefetch] = useState(false);
+  const [datac, setData] = useState(null); // This state holds the currently selected patient's data
+  const [queue, setQueue] = useState(null); // This holds the queue data fetched from the server
+  const [refetch, setRefetch] = useState(false); // This triggers refetching of the queue data
 
   const {
     isOpen: isModalOpen,
@@ -40,7 +39,7 @@ const Attendant = () => {
 
       if (response.status === 200) {
         toast.success(response.data.message);
-        setRefetch(!refetch);
+        setRefetch(!refetch); // Trigger refetch to update queue
       }
     } catch (error) {
       console.error("Error adding patient to queue:", error);
@@ -59,16 +58,15 @@ const Attendant = () => {
         );
 
         if (response.status === 200) {
-          setQueue(response.data);
+          setQueue(response.data); // Set queue data
         }
       } catch (error) {
         console.error("Error fetching queue data:", error);
-        // toast.error("");
       }
     };
 
     fetchData();
-  }, [refetch]);
+  }, [refetch]); // Refetch data when refetch state changes
 
   return (
     <Layout>
@@ -88,7 +86,6 @@ const Attendant = () => {
             <div className="flex flex-col items-center justify-center w-44 text-center rounded-lg text-xl p-2 border-2">
               Patients In The Queue: {queue ? queue.queue.length : "0"}
             </div>
-           
           </div>
         </div>
       </div>
@@ -139,17 +136,11 @@ const Attendant = () => {
         </div>
 
         <div className="flex justify-center">
-          <Button
-            className="p-2 border mt-5 px-10 "
-            color="primary"
-            onClick={addQueue}
-          >
+          <Button className="p-2 border mt-5 px-10 " color="primary" onClick={addQueue}>
             Add patient to the queue
           </Button>
         </div>
       </div>
-
-
 
       {/* Scan QR Modal */}
       <ScanQrModalAttendant
@@ -158,58 +149,50 @@ const Attendant = () => {
         onOpenChange={onModalChange}
       />
 
-<div className="flex flex-col mt-10 px-10">
-  <h2 className="text-lg font-semibold mb-2">Patients Queue:</h2>
-  {queue && queue.queue && queue.queue.length > 0 ? (
-    <table className="min-w-full border-collapse border border-gray-200">
-      <thead>
-        <tr className="bg-gray-100">
-          <th className="border px-4 py-2 text-center">Queue Position</th>
-          <th className="border px-4 py-2 text-center">Patient Name</th>
-          <th className="border px-4 py-2 text-center">Patient ID Number</th>
-          <th className="border px-4 py-2 text-center">Phone Number</th>
-          <th className="border px-4 py-2 text-center">Added At</th>
-        </tr>
-      </thead>
-      <tbody>
-        {queue.queue.map((qItem, index) => (
-          <tr key={qItem?.item?._id || index} className="bg-white shadow-md">
-            {/* Queue Position */}
-            <td className="border px-4 py-2 text-gray-700 text-base text-center">
-              {index + 1}
-            </td>
-
-            {/* Patient Name */}
-            <td className="border px-4 py-2 text-gray-700 text-base text-center">
-              {qItem?.item?.firstName} {qItem?.item?.lastName}
-            </td>
-
-            {/* Patient ID */}
-            <td className="border px-4 py-2 text-gray-700 text-base text-center">
-              {qItem?.item?.idNumber || 'N/A'}
-            </td>
-
-            {/* Phone Number */}
-            <td className="border px-4 py-2 text-gray-700 text-base text-center">
-              {qItem?.item?.phoneNumber || 'N/A'}
-            </td>
-
-            {/* Added At */}
-            <td className="border px-4 py-2 text-gray-700 text-base text-center">
-              {qItem?.createdAt ? new Date(qItem.createdAt).toLocaleString() : 'N/A'}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  ) : (
-    <p>Waiting for the patients queue...</p>
-  )}
-</div>
-
-
-
-
+      {/* Patients Queue Section */}
+      <div className="flex flex-col mt-10 px-10">
+        <h2 className="text-lg font-semibold mb-2">Patients Queue:</h2>
+        {queue && queue.queue && queue.queue.length > 0 ? (
+          <table className="min-w-full border-collapse border border-gray-200">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="border px-4 py-2 text-center">Queue Position</th>
+                <th className="border px-4 py-2 text-center">Patient Name</th>
+                <th className="border px-4 py-2 text-center">Patient ID Number</th>
+                <th className="border px-4 py-2 text-center">Phone Number</th>
+                <th className="border px-4 py-2 text-center">Added At</th>
+              </tr>
+            </thead>
+            <tbody>
+              {queue.queue.map((qItem, index) => (
+                <tr
+                  key={qItem?.item?._id || index}
+                  className="bg-white shadow-md hover:bg-gray-200 cursor-pointer"
+                  onClick={() => setData(qItem?.item)} // Set patient data on row click
+                >
+                  <td className="border px-4 py-2 text-gray-700 text-base text-center">
+                    {index + 1}
+                  </td>
+                  <td className="border px-4 py-2 text-gray-700 text-base text-center">
+                    {qItem?.item?.firstName} {qItem?.item?.lastName}
+                  </td>
+                  <td className="border px-4 py-2 text-gray-700 text-base text-center">
+                    {qItem?.item?.idNumber || "N/A"}
+                  </td>
+                  <td className="border px-4 py-2 text-gray-700 text-base text-center">
+                    {qItem?.item?.phoneNumber || "N/A"}
+                  </td>
+                  <td className="border px-4 py-2 text-gray-700 text-base text-center">
+                    {qItem?.createdAt ? new Date(qItem.createdAt).toLocaleString() : "N/A"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>Waiting for the patients queue...</p>
+        )}
+      </div>
     </Layout>
   );
 };

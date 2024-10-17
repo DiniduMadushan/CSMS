@@ -8,6 +8,7 @@ import patientRouter from "./router/patientRouter.js";
 import medicalRouter from "./router/medicalRouter.js";
 import reportsRouter from "./router/reportsRouter.js";
 import adminRouter from "./router/adminRouter.js"
+import feedbackRouter from  "./router/feedbackRouter.js";
 import { sendUsernamePassword } from "./utils/SendSMS.js";
 import path from "path";
 import multer from "multer";
@@ -38,6 +39,7 @@ app.use("/patients", patientRouter);
 app.use("/medical-record", medicalRouter);
 app.use("/reports", reportsRouter);
 app.use("/admin", adminRouter);
+app.use("/feedbacks", feedbackRouter);
 
 connectMongoDB();
 
