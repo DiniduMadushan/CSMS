@@ -37,12 +37,10 @@ export const getPatientHistory = async (req, res) => {
   }
 };
 
-
+//add a new medical record
 
 export const createMedicalRecord = async (req, res) => {
   const { patientId, docName, description } = req.body;
-
-  // Check for missing required fields
   if (!patientId) {
     
     return res.status(400).json({ message: "Please Scan patient's QR" });
@@ -59,12 +57,11 @@ export const createMedicalRecord = async (req, res) => {
   }
 
   try {
-    // Create a new medical record
     const newMedicalRecord = new MedicalRecord({
       patientId,
       docName,
       description,
-      date: Date.now(),  // Set date to the current timestamp
+      date: Date.now(), 
     });
 
     await newMedicalRecord.save();
@@ -78,7 +75,54 @@ export const createMedicalRecord = async (req, res) => {
   }
 };
 
+//update a medical record
+
+export const updateMedicalRecord = async (req, res) => {
+  
+  const recordId = req.params.id; 
+  const { description } = req.body;
+
+  try {
+    const updatedRecord = await MedicalRecord.findByIdAndUpdate(
+      recordId,              
+      { description },         
+      { new: true }            
+    );
+
+    // If the record is not found, send a 404 response
+    if (!updatedRecord) {
+      return res.status(404).json({ message: "Medical record not found" });
+    }
+
+    res.status(200).json(updatedRecord);
+  } catch (error) {
+    console.error("Error updating medical record:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+//delete a medical record
+
+export const deleteMedicalRecord = async (req, res) => {
+  
+  try {
+      const recordId = req.params.id;
+
+      const deletedRecord = await MedicalRecord.findByIdAndDelete(recordId);
+
+      if (!deletedRecord) {
+          return res.status(404).json({ message: 'Medical record not found' });
+      }
+
+      res.status(200).json({ message: 'Medical record deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting medical record:', error);
+      res.status(500).json({ message: 'Server error' });
+  }
+};
+
 //create a prescriptionList
+
 export const createPrescriptionList = async (req, res) => {
   const { patientId, docName, prescription_list } = req.body;
 
@@ -105,7 +149,6 @@ export const createPrescriptionList = async (req, res) => {
       date: Date.now(), 
     });
 
-    // Save the new medical record
     await newPrescriptionRecord.save();
     return res.status(201).json({
       data: newPrescriptionRecord,
@@ -116,6 +159,7 @@ export const createPrescriptionList = async (req, res) => {
   }
 };
 
+//get prescription by id
 
 export const getPrescriptionByPatientId = async (req, res) => {
   const { patientid } = req.params;
@@ -141,6 +185,7 @@ export const getPrescriptionByPatientId = async (req, res) => {
   }
 };
 
+//create a xray request
 
 export const createMedicalXray = async (req, res) => {
   const { patientId, xray, xrayIssued, delivered } = req.body;
@@ -171,6 +216,8 @@ export const createMedicalXray = async (req, res) => {
   }
 };
 
+//read medical xray by id
+
 export const getMedicalXray = async (req, res) => {
   const { patientid } = req.params;
   console.log(patientid);
@@ -186,6 +233,8 @@ export const getMedicalXray = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+//update medical xray
 
 export const updateMedicalXray = async (req, res) => {
   const { id } = req.params;
@@ -211,6 +260,9 @@ export const updateMedicalXray = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+
+//create a lab request
 
 export const createLabReport = async (req, res) => {
   const { patientId, report_desc, reportRequested, delivered } = req.body;
@@ -241,6 +293,8 @@ export const createLabReport = async (req, res) => {
   }
 };
 
+//get lab report by id
+
 export const getLabReport = async (req, res) => {
   const { patientid } = req.params;
   console.log(patientid);
@@ -256,6 +310,8 @@ export const getLabReport = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+//update lab request
 
 export const updateLabReport = async (req, res) => {
   const { id } = req.params;
@@ -332,20 +388,19 @@ export const nextClinicDate = async (req, res) => {
 //add patient to the queue
 
 export const addQueue = async (req, res) => {
-  const { id } = req.params; // Patient's ObjectId
+  const { id } = req.params;
 
   try {
     let queue = await Queue.findOne();
 
     if (queue) {
-      // Check if the patient is already in the queue
+      
       if (queue.queue.some((patient) => patient.item.toString() === id)) {
         return res.json({
           message: "Patient already in queue",
           queue,
         });
       } else {
-        // Add patient with `item` (Patient's ObjectId) and `createdAt` timestamp
         queue.queue.push({ item: id, createdAt: new Date() });
         await queue.save();
         return res.json({
@@ -373,6 +428,7 @@ export const addQueue = async (req, res) => {
 
 
 //remove from the queue
+
 export const removeQueue = async (req, res) => {
   const { id } = req.params;
   try {
@@ -405,13 +461,14 @@ export const removeQueue = async (req, res) => {
 
 
 //get details from the queue
+
 export const getQueue = async (req, res) => {
   console.log("inside get queue");
   
   try {
-    const queue = await Queue.findOne().populate("queue.item"); // Populate the `item` field with patient details
+    const queue = await Queue.findOne().populate("queue.item"); 
     queue.queue.forEach((qItem) => {
-      const item = qItem.item; // Assuming item is an object
+      const item = qItem.item; 
       console.log("Patient Name:", item.firstName, item.lastName);
       console.log("Patient ID:", item.idNumber);
       console.log("Phone Number:", item.phoneNumber);
@@ -469,7 +526,7 @@ export const getLabHistoryByPatientId= async (req, res) => {
   }
 };
 
-//get todayprescriptions count
+//get today prescriptions count
 
 export const getTodayPrescriptionCount = async (req, res) => {
   

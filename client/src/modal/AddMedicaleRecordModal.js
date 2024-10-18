@@ -11,7 +11,13 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-const AddMedicaleRecordModal = ({ isOpen, onOpenChange, datac, docName }) => {
+const AddMedicaleRecordModal = ({
+  isOpen,
+  onOpenChange,
+  datac,
+  docName,
+  onAddMedicalRecord, // Accept the refetch handler
+}) => {
   const [medicalRecord, setMedicalRecord] = useState("");
 
   const handleMedicalRecordChange = (e) => {
@@ -45,30 +51,15 @@ const AddMedicaleRecordModal = ({ isOpen, onOpenChange, datac, docName }) => {
 
       if (res.status === 201) {
         toast.success("Medical Record Added Successfully");
-        // removeQueue(datac._id); 
         onOpenChange(); // Close the modal
+        setMedicalRecord(""); // Clear the textarea
+        onAddMedicalRecord(); // Trigger the refetch handler
       }
     } catch (error) {
       console.error("Error adding medical record:", error);
-      toast.error("Failed to add medical record.",error);
+      toast.error("Failed to add medical record.", error);
     }
   };
-
-  // const removeQueue = async (id) => {
-  //   try {
-  //     const response = await axios.put(
-  //       `http://localhost:5000/medical-record/rm/queue/${id}`
-  //     );
-
-  //     if (response.status === 200) {
-  //       toast.success(response.data.message);
-  //       console.log(response.data.queue);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error removing patient from queue:", error);
-  //     toast.error("Failed to remove patient from queue.");
-  //   }
-  // };
 
   return (
     <Modal
@@ -91,12 +82,17 @@ const AddMedicaleRecordModal = ({ isOpen, onOpenChange, datac, docName }) => {
                   <Textarea
                     label="Medical Record"
                     placeholder="Enter Medical Record"
+                    value={medicalRecord} // Bind value to state
                     onChange={handleMedicalRecordChange}
                   />
                 </div>
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onClick={() => setMedicalRecord("")}>
+                <Button
+                  color="danger"
+                  variant="light"
+                  onClick={() => setMedicalRecord("")}
+                >
                   Clear
                 </Button>
                 <Button color="primary" type="submit">

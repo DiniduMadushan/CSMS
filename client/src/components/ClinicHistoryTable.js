@@ -1,49 +1,61 @@
-import {
-  Pagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-  Tooltip,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Textarea,
-  Button
+import { 
+  Pagination, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableColumn, 
+  TableHeader, 
+  TableRow, 
+  Tooltip, 
+  Modal, 
+  ModalBody, 
+  ModalContent, 
+  ModalFooter, 
+  ModalHeader, 
+  Textarea, 
+  Button, 
+  Input 
 } from "@nextui-org/react";
-import { FaRegEye } from "react-icons/fa6";
+import { FaRegEye, FaUserEdit } from "react-icons/fa";
+import { MdDeleteSweep } from "react-icons/md";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
+import AddMedicaleRecordModal from "../modal/AddMedicaleRecordModal";
 
-const ClinicHistoryTable = ({ patientId }) => {
+const ClinicHistoryTable = ({ patientId, triggerRefetch }) => {
   const [page, setPage] = useState(1);
   const [clinicHistory, setClinicHistory] = useState([]);
   const [visible, setVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
+  const [editingRecord, setEditingRecord] = useState(null); // For editing
+  const [addRecordVisible, setAddRecordVisible] = useState(false); // Add record modal
+  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false); // Delete confirm modal
+  const [recordToDelete, setRecordToDelete] = useState(null); // Record to delete
+  const [updateConfirmVisible, setUpdateConfirmVisible] = useState(false); // Update confirm modal
+  const [updatedDescription, setUpdatedDescription] = useState(""); // Store updated description
+
   const rowsPerPage = 6;
 
-  // Fetch clinic history based on patientId
-  useEffect(() => {
-    const fetchClinicHistory = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/medical-record/medicalhistory/${patientId}`
-        );
-        const sortedHistory = response.data.sort((a, b) => new Date(b.date) - new Date(a.date)); 
-        setClinicHistory(sortedHistory);
-      } catch (error) {
-        console.error("Error fetching clinic history:", error);
-      }
-    };
+  // Fetch clinic history
+  const fetchClinicHistory = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/medical-record/medicalhistory/${patientId}`
+      );
+      const sortedHistory = response.data.sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      );
+      setClinicHistory(sortedHistory);
+    } catch (error) {
+      console.error("Error fetching clinic history:", error);
+    }
+  };
 
+  useEffect(() => {
     if (patientId) {
       fetchClinicHistory();
     }
-  }, [patientId]);
+  }, [patientId, triggerRefetch]);
 
   const pages = Math.ceil(clinicHistory.length / rowsPerPage);
 
@@ -61,6 +73,45 @@ const ClinicHistoryTable = ({ patientId }) => {
   const closeHandler = () => {
     setVisible(false);
     setSelectedRecord(null);
+  };
+
+  const handleDeleteClick = (recordId) => {
+    setRecordToDelete(recordId);
+    setDeleteConfirmVisible(true);
+  };
+
+  const handleDeleteRecord = async () => {
+    if (recordToDelete) {
+      try {
+        await axios.delete(
+          `http://localhost:5000/medical-record/deleteMedicalRecord/${recordToDelete}`
+        );
+        setDeleteConfirmVisible(false);
+        fetchClinicHistory(); // Fetch updated history after deletion
+      } catch (error) {
+        console.error("Error deleting medical record:", error);
+      }
+    }
+  };
+
+  const handleEditRecord = (record) => {
+    setEditingRecord(record); // Set the record to be edited
+    setUpdatedDescription(record.description); // Initialize updated description
+    setUpdateConfirmVisible(true); // Show the update confirmation modal
+  };
+
+  const handleUpdateRecord = async () => {
+    if (editingRecord) {
+      try {
+        const updatedRecord = { ...editingRecord, description: updatedDescription };
+        await axios.put(`http://localhost:5000/medical-record/updateMedicalRecord/${editingRecord._id}`, updatedRecord);
+        setEditingRecord(null);
+        setUpdateConfirmVisible(false); // Close the confirmation modal
+        fetchClinicHistory(); // Refetch data after updating
+      } catch (error) {
+        console.error("Error updating medical record:", error);
+      }
+    }
   };
 
   return (
@@ -109,6 +160,16 @@ const ClinicHistoryTable = ({ patientId }) => {
                     <FaRegEye onClick={() => handleShowMore(item)} />
                   </span>
                 </Tooltip>
+                <Tooltip content="Edit">
+                  <span className="text-lg text-blue-400 cursor-pointer active:opacity-50">
+                    <FaUserEdit onClick={() => handleEditRecord(item)} />
+                  </span>
+                </Tooltip>
+                <Tooltip content="Delete">
+                  <span className="text-lg text-red-400 cursor-pointer active:opacity-50">
+                    <MdDeleteSweep onClick={() => handleDeleteClick(item._id)} />
+                  </span>
+                </Tooltip>
               </TableCell>
             </TableRow>
           ))}
@@ -123,7 +184,6 @@ const ClinicHistoryTable = ({ patientId }) => {
               Details for {new Date(selectedRecord.date).toLocaleDateString()}
             </ModalHeader>
             <ModalBody>
-              {/* Only displaying the medical record description */}
               <Textarea
                 readOnly
                 label="Medical Record Description"
@@ -134,6 +194,66 @@ const ClinicHistoryTable = ({ patientId }) => {
             <ModalFooter>
               <Button auto flat color="error" onClick={closeHandler}>
                 Close
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
+
+      {/* Modal for editing a medical record with confirmation */}
+      {editingRecord && (
+        <Modal isOpen={updateConfirmVisible} onClose={() => setUpdateConfirmVisible(false)}>
+          <ModalContent>
+            <ModalHeader>Edit Medical Record Description</ModalHeader>
+            <ModalBody>
+              <Input
+                label="Date of Visit"
+                value={new Date(editingRecord.date).toLocaleDateString()}
+                readOnly
+              />
+              <Input
+                label="Time of Visit"
+                value={new Date(editingRecord.date).toLocaleTimeString()}
+                readOnly
+              />
+              <Input
+                label="Responsible Doctor"
+                value={editingRecord.docName}
+                readOnly
+              />
+              <Textarea
+                label="Description"
+                value={updatedDescription}
+                onChange={(e) => setUpdatedDescription(e.target.value)}
+                minRows={3}
+              />
+            </ModalBody>
+            <ModalFooter>
+              <Button auto flat onClick={() => setUpdateConfirmVisible(false)}>
+                Cancel
+              </Button>
+              <Button auto onClick={handleUpdateRecord}>
+                Confirm Update
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
+
+      {/* Confirm delete modal */}
+      {deleteConfirmVisible && (
+        <Modal isOpen={deleteConfirmVisible} onClose={() => setDeleteConfirmVisible(false)}>
+          <ModalContent>
+            <ModalHeader>Confirm Deletion</ModalHeader>
+            <ModalBody>
+              Are you sure you want to delete this medical record?
+            </ModalBody>
+            <ModalFooter>
+              <Button auto flat onClick={() => setDeleteConfirmVisible(false)}>
+                Cancel
+              </Button>
+              <Button auto color="error" onClick={handleDeleteRecord}>
+                Delete
               </Button>
             </ModalFooter>
           </ModalContent>

@@ -18,21 +18,23 @@ import { FaRegEye } from "react-icons/fa6";
 import { useMemo, useState, useEffect } from "react";
 import axios from "axios"; // Import Axios for making API calls
 
-const PrescriptionHistoryTable = ({ patientId }) => {
+const PrescriptionHistoryTable = ({ patientId, triggerRefetch }) => {
   const [page, setPage] = useState(1);
   const [prescriptions, setPrescriptions] = useState([]);
   const [selectedPrescription, setSelectedPrescription] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const rowsPerPage = 6;
 
+  // Fetch prescriptions based on patientId and triggerRefetch
   useEffect(() => {
-    // Fetch prescriptions based on patientId
     const fetchPrescriptions = async () => {
       try {
         const response = await axios.get(
           `http://localhost:5000/medical-record/prescriptionhistory/${patientId}`
         );
-        const sortedPrescriptions = response.data.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date (newest first)
+        const sortedPrescriptions = response.data.sort(
+          (a, b) => new Date(b.date) - new Date(a.date)
+        ); // Sort by date (newest first)
         setPrescriptions(sortedPrescriptions);
       } catch (error) {
         console.error("Error fetching prescriptions:", error);
@@ -42,7 +44,7 @@ const PrescriptionHistoryTable = ({ patientId }) => {
     if (patientId) {
       fetchPrescriptions();
     }
-  }, [patientId]);
+  }, [patientId, triggerRefetch]); // Add triggerRefetch to dependencies
 
   const pages = Math.ceil(prescriptions.length / rowsPerPage);
 

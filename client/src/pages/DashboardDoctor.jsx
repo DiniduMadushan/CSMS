@@ -2,7 +2,6 @@ import Layout from "../layout/Layout";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useDisclosure } from "@nextui-org/react";
-
 import DoctorCards from "../components/DoctorCards";
 import ScanQrModal from "../modal/ScanQrModal";
 import ClinicHistoryTable from "../components/ClinicHistoryTable";
@@ -86,6 +85,16 @@ const DashboardDoctor = () => {
     }
     // Toggle refetch to trigger DoctorCards to refetch data
     setRefetch(!refetch);
+  };
+
+  // Function to handle refetch after adding medical record
+  const handleMedicalRecordAdd = () => {
+    setRefetch(!refetch); // Toggle refetch to update tables
+  };
+
+  // Function to handle refetch after adding prescription
+  const handlePrescriptionAdd = () => {
+    setRefetch(!refetch); // Toggle refetch to update PrescriptionHistoryTable
   };
 
   return (
@@ -196,10 +205,10 @@ const DashboardDoctor = () => {
       </div>
 
       <div className="flex justify-center">
-        <ClinicHistoryTable patientId={datac?._id} />
+        <ClinicHistoryTable patientId={datac?._id} triggerRefetch={refetch} />
       </div>
       <div className="flex justify-center">
-        <PrescriptionHistoryTable patientId={datac?._id} />
+        <PrescriptionHistoryTable patientId={datac?._id} triggerRefetch={refetch} />
       </div>
       <div className="flex justify-center">
         <XrayHistoryTable patientId={datac?._id} />
@@ -218,29 +227,27 @@ const DashboardDoctor = () => {
         onOpenChange={onAddMedicaleRecordChange}
         datac={datac}
         docName={doc_name}
+        onAddMedicalRecord={handleMedicalRecordAdd} // Pass refetch handler to modal
       />
-
       <AddPrescriptionModal
         isOpen={isAddPrescriptionOpen}
         onOpenChange={onAddPrescriptionChange}
         datac={datac}
         docName={doc_name}
+        onAddPrescription={handlePrescriptionAdd} // Pass refetch handler to modal
       />
-
       <AddXrayModal
         isOpen={isXrayOpen}
         onOpenChange={onXrayChange}
         datac={datac}
         docName={doc_name}
       />
-
       <NewBloodReportModal
         isOpen={isBloodOpen}
         onOpenChange={onBloodChange}
         datac={datac}
         docName={doc_name}
       />
-
       <ClinicDateModal
         isOpen={isClinicDateOpen}
         onOpenChange={onClinicDateChange}
