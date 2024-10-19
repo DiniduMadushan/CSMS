@@ -20,6 +20,9 @@ import {
   getTodayRegisteredCount,
   deleteMedicalRecord,
   updateMedicalRecord,
+  updatePrescription,
+  deletePrescription,
+  getAppoinments,
   // addXrayQueue,
   // removeXrayQueue,
   // getXrayQueue,
@@ -48,5 +51,8 @@ medicalRouter.get("/prescriptions/today", getTodayPrescriptionCount);
 medicalRouter.get("/registrations/today", getTodayRegisteredCount);
 medicalRouter.delete("/deleteMedicalRecord/:id", deleteMedicalRecord);
 medicalRouter.put("/updateMedicalRecord/:id", updateMedicalRecord);
+medicalRouter.put("/update/prescription/:id", updatePrescription);
+medicalRouter.delete("/delete/prescription/:id", deletePrescription);
+medicalRouter.get("/appointments/getAppoinments", getAppoinments);
 
 export default medicalRouter;

@@ -92,11 +92,6 @@ const DashboardDoctor = () => {
     setRefetch(!refetch); // Toggle refetch to update tables
   };
 
-  // Function to handle refetch after adding prescription
-  const handlePrescriptionAdd = () => {
-    setRefetch(!refetch); // Toggle refetch to update PrescriptionHistoryTable
-  };
-
   return (
     <Layout>
       <div className="flex justify-start flex-col items-start">
@@ -208,7 +203,7 @@ const DashboardDoctor = () => {
         <ClinicHistoryTable patientId={datac?._id} triggerRefetch={refetch} />
       </div>
       <div className="flex justify-center">
-        <PrescriptionHistoryTable patientId={datac?._id} triggerRefetch={refetch} />
+        <PrescriptionHistoryTable patientId={datac?._id} />
       </div>
       <div className="flex justify-center">
         <XrayHistoryTable patientId={datac?._id} />
@@ -229,19 +224,21 @@ const DashboardDoctor = () => {
         docName={doc_name}
         onAddMedicalRecord={handleMedicalRecordAdd} // Pass refetch handler to modal
       />
+
       <AddPrescriptionModal
         isOpen={isAddPrescriptionOpen}
         onOpenChange={onAddPrescriptionChange}
         datac={datac}
         docName={doc_name}
-        onAddPrescription={handlePrescriptionAdd} // Pass refetch handler to modal
       />
+
       <AddXrayModal
         isOpen={isXrayOpen}
         onOpenChange={onXrayChange}
         datac={datac}
         docName={doc_name}
       />
+
       <NewBloodReportModal
         isOpen={isBloodOpen}
         onOpenChange={onBloodChange}

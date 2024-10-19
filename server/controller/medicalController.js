@@ -576,4 +576,82 @@ export const getTodayRegisteredCount = async (req, res) => {
   }
 };
 
+//update prescription list
+
+export const updatePrescription = async (req, res) => {
+  const prescriptionId = req.params.id;
+  const updatedData = req.body;
+
+  try {
+    const updatedPrescription = await PrescriptionList.findByIdAndUpdate(
+      prescriptionId,
+      updatedData,
+      { new: true }
+    );
+
+    if (!updatedPrescription) {
+      return res.status(404).json({ message: "Prescription not found" });
+    }
+
+    res.status(200).json({
+      message: "Prescription updated successfully",
+      updatedPrescription,
+    });
+  } catch (error) {
+    console.error("Error updating prescription:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+//delete selected prescription
+
+export const deletePrescription = async (req, res) => {
+  const prescriptionId = req.params.id;
+
+  try {
+    const deletedPrescription = await PrescriptionList.findByIdAndDelete(prescriptionId);
+
+    if (!deletedPrescription) {
+      return res.status(404).json({ message: "Prescription not found" });
+    }
+
+    res.status(200).json({
+      message: "Prescription deleted successfully",
+      deletedPrescription,
+    });
+  } catch (error) {
+    console.error("Error deleting prescription:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+//get the appoinments according to date
+
+export const getAppoinments = async (req, res) => {
+  const { date } = req.query; 
+console.log("inside appoinments");
+
+  try {
+    const appointments = await Appointment.find({ date })
+      .populate("patientId"); 
+
+    const patientDetails = await Promise.all(
+      appointments.map(async (appointment) => {
+        const patient = await Patient.findById(appointment.patientId);
+        return {
+          name: `${patient.firstName} ${patient.lastName}`,
+          idNumber: patient.idNumber,
+          phoneNumber: patient.phoneNumber,
+          email: patient.email,
+        };
+      })
+    );
+
+    res.status(200).json(patientDetails);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching appointments", error });
+  }
+};
+
 
