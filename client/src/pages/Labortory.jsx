@@ -11,10 +11,12 @@ import {
   useDisclosure, 
 } from "@nextui-org/react"; 
 import Layout from "../layout/Layout"; 
+import LabCards from "../components/LabCards"
 import ScanQrModalLaboratary from "../modal/ScanQrModalLaboratary"; 
 import { useEffect, useMemo, useState } from "react"; 
 import toast from "react-hot-toast"; 
-import axios from "axios"; // Ensure axios is imported
+import axios from "axios";
+
 
 const Laboratory = () => {   
   const [page, setPage] = useState(1);   
@@ -122,7 +124,10 @@ const Laboratory = () => {
   };   
 
   return (     
-    <Layout>       
+    <Layout> 
+    <div className="">
+          <LabCards refetch={refetch} />
+    </div>      
       <div className="flex px-10">         
         <div className="flex flex-col items-center justify-center">           
           <button             
@@ -169,7 +174,7 @@ const Laboratory = () => {
                 </div>               
               </div>             
             )}           
-          </div>         
+          </div> 
         </div>          
 
         {/* Lab Report Details Section */}         
@@ -211,7 +216,8 @@ const Laboratory = () => {
             />             
             <Button onClick={onSubmit} color="danger">               
               Upload             
-            </Button>           
+            </Button>   
+                    
           </div>         
         </div>       
       </div>       

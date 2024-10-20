@@ -754,3 +754,15 @@ export const countXQueueToday = async (req, res) => {
     res.status(500).json({ message: "Failed to count XQueue documents" });
   }
 };
+
+//get total lab report count
+export const getTotalLabResults = async (req, res) => {
+  
+  try {
+    const totalReports = await Lab.countDocuments({});
+    res.status(200).json({ totalReports });
+  } catch (error) {
+    console.error("Error fetching lab reports total count:", error);
+    res.status(500).json({ message: "Failed to get the total count of lab reports" });
+  }
+};

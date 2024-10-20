@@ -28,6 +28,7 @@ import {
   getXqueueData,
   removeXrayQueue,
   countXQueueToday,
+  getTotalLabResults,
   
 } from "../controller/medicalController.js";
 
@@ -62,6 +63,7 @@ medicalRouter.get("/xqueue/getCount", getXqueueCount);
 medicalRouter.get("/xqueue/getData", getXqueueData);
 medicalRouter.delete('/xqueue/remove/:patientId', removeXrayQueue);
 medicalRouter.get('/xqueue/today-count', countXQueueToday);
+medicalRouter.get('/labReports/totalcount', getTotalLabResults);
 
 
 export default medicalRouter;

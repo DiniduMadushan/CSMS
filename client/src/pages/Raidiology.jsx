@@ -88,7 +88,6 @@ const Radiology = () => {
         }
       );
   
-      // Check if X-ray was delivered successfully
       if (response.status === 200) {
         toast.success("Xray delivered successfully.");
         
@@ -293,6 +292,9 @@ const Radiology = () => {
       </div>
       <div className="w-full flex items-center justify-center mt-16">
         <div className="w-[1000px] mt-2">
+        <div className="flex justify-between p-2">
+        <h1 className="text-center mt-2 font-semibold">Patient X-Ray History</h1>
+      </div>
           <Table
             aria-label="Example static collection table"
             bottomContent={
