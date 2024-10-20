@@ -1,16 +1,19 @@
 import PatientsList from "../components/PatientsList";
-import RegistrarCards from "../components/Registrarcards"
+import RegistrarCards from "../components/Registrarcards";
 import Layout from "../layout/Layout";
-import { Button, Input } from "@nextui-org/react";
+import { useState } from "react";
 
 const DashboardAddPatient = () => {
+  const [refetchRegistrarCards, setRefetchRegistrarCards] = useState(false);
+
   return (
     <Layout>
-    <RegistrarCards/>
+      <RegistrarCards refetch={refetchRegistrarCards} />
       <div className="flex w-full justify-center items-center h-[500px]">
-        <PatientsList />
+        <PatientsList setRefetchRegistrarCards={setRefetchRegistrarCards} />
       </div>
     </Layout>
   );
 };
+
 export default DashboardAddPatient;

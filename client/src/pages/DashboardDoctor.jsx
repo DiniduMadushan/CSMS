@@ -202,7 +202,7 @@ const DashboardDoctor = () => {
         <ClinicHistoryTable patientId={datac?._id} triggerRefetch={refetch} />
       </div>
       <div className="flex justify-center">
-        <PrescriptionHistoryTable patientId={datac?._id} />
+        <PrescriptionHistoryTable patientId={datac?._id} triggerRefetch={refetch} />
       </div>
       <div className="flex justify-center">
         <XrayHistoryTable patientId={datac?._id} />
@@ -229,6 +229,7 @@ const DashboardDoctor = () => {
         onOpenChange={onAddPrescriptionChange}
         datac={datac}
         docName={doc_name}
+        onAddPrescription={handleMedicalRecordAdd}
       />
 
       <AddXrayModal

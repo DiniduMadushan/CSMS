@@ -1,14 +1,14 @@
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Button,
-  useDisclosure,
-  Tooltip,
-  Pagination,
+import { 
+  Table, 
+  TableHeader, 
+  TableColumn, 
+  TableBody, 
+  TableRow, 
+  TableCell, 
+  Button, 
+  useDisclosure, 
+  Tooltip, 
+  Pagination 
 } from "@nextui-org/react";
 import { FaUserEdit } from "react-icons/fa";
 import { MdDeleteSweep } from "react-icons/md";
@@ -19,14 +19,13 @@ import EditPatientModel from "../modal/EditPatientModal";
 import { useEffect, useMemo, useState } from "react";
 import DeletePatientModel from "../modal/DeletePatientModel";
 
-const PatientsList = () => {
+const PatientsList = ({ setRefetchRegistrarCards }) => {
   const [page, setPage] = useState(1);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [Patient, setPatient] = useState([]);
   const [refetch, setRefetch] = useState(false);
   const [refetchsss, setRefetchsss] = useState(false);
-  const [refetchc, setRefcetch] = useState(false);
 
   const rowsPerPage = 6;
   const pages = Math.ceil(Patient.length / rowsPerPage);
@@ -37,28 +36,28 @@ const PatientsList = () => {
     return Patient.slice(start, end);
   }, [page, Patient]);
 
-  const {
-    isOpen: isModalOpen,
-    onOpen: openModal,
-    onOpenChange: onModalChange,
+  const { 
+    isOpen: isModalOpen, 
+    onOpen: openModal, 
+    onOpenChange: onModalChange 
   } = useDisclosure();
 
-  const {
-    isOpen: isShowMoreOpen,
-    onOpen: openShowMore,
-    onOpenChange: onShowMoreChange,
+  const { 
+    isOpen: isShowMoreOpen, 
+    onOpen: openShowMore, 
+    onOpenChange: onShowMoreChange 
   } = useDisclosure();
 
-  const {
-    isOpen: isEditOpen,
-    onOpen: openEdit,
-    onOpenChange: onEditChange,
+  const { 
+    isOpen: isEditOpen, 
+    onOpen: openEdit, 
+    onOpenChange: onEditChange 
   } = useDisclosure();
 
-  const {
-    isOpen: isDeleteOpen,
-    onOpen: openDelete,
-    onOpenChange: onDeleteChange,
+  const { 
+    isOpen: isDeleteOpen, 
+    onOpen: openDelete, 
+    onOpenChange: onDeleteChange 
   } = useDisclosure();
 
   const handleShowMore = (patient) => {
@@ -88,6 +87,11 @@ const PatientsList = () => {
     };
 
     fetchPatients();
+  }, [refetch, refetchsss]);
+
+  // Trigger refetch of RegistrarCards after patient add or delete
+  useEffect(() => {
+    setRefetchRegistrarCards(prev => !prev);
   }, [refetch, refetchsss]);
 
   return (
@@ -171,7 +175,6 @@ const PatientsList = () => {
         setSelectedPatient={setSelectedPatient}
         setRefetch={setRefetch}
       />
-
       <DeletePatientModel
         isOpen={isDeleteOpen}
         onOpenChange={onDeleteChange}

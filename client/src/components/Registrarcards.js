@@ -3,11 +3,10 @@ import { CiCalendarDate, CiTimer } from "react-icons/ci";
 import { FaUsers } from "react-icons/fa6";
 import axios from "axios";
 
-const CardStarter = () => {
+const CardStarter = (refetch) => {
   const [date, setDate] = useState(getDateTime());
   const [time, setTime] = useState(getTime());
   const [patientsCount, setPatientsCount] = useState(0); // State for total patients
-  const [staffCount, setStaffCount] = useState(0); // State for total staff members
   const [registeredTodayCount, setRegisteredTodayCount] = useState(0); // State for patients registered today
 
   // Fetch total patients, staff count, and today's registered patients when the component mounts
@@ -26,7 +25,7 @@ const CardStarter = () => {
     };
   
     fetchCounts();
-  }, []); 
+  }, [refetch]); 
   
   // Update time every second
   useEffect(() => {

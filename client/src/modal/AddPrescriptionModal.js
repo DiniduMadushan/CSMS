@@ -33,7 +33,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm }) => {
   );
 };
 
-const AddPrescriptionModal = ({ isOpen, onOpenChange, datac, docName }) => {
+const AddPrescriptionModal = ({ isOpen, onOpenChange, datac, docName,onAddPrescription }) => {
   const [prescription, setPrescription] = useState("");
   const [isConfirmOpen, setIsConfirmOpen] = useState(false); // State for confirmation modal
 
@@ -64,6 +64,7 @@ const AddPrescriptionModal = ({ isOpen, onOpenChange, datac, docName }) => {
       if (res.status === 201) {
         toast.success("Prescription Added Successfully");
         onOpenChange(); // Close the Add Prescription Modal
+        onAddPrescription();
       }
     } catch (error) {
       toast.error("Failed to add prescription", error);

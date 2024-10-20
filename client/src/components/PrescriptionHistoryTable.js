@@ -20,7 +20,7 @@ import { MdDeleteSweep } from "react-icons/md"; // Import the delete icon
 import { useMemo, useState, useEffect } from "react";
 import axios from "axios"; // Import Axios for making API calls
 
-const PrescriptionHistoryTable = ({ patientId }) => {
+const PrescriptionHistoryTable = ({ patientId, triggerRefetch }) => {
   const [page, setPage] = useState(1);
   const [prescriptions, setPrescriptions] = useState([]);
   const [selectedPrescription, setSelectedPrescription] = useState(null);
@@ -50,7 +50,7 @@ const PrescriptionHistoryTable = ({ patientId }) => {
     if (patientId) {
       fetchPrescriptions();
     }
-  }, [patientId]);
+  }, [patientId,triggerRefetch]);
 
   const pages = Math.ceil(prescriptions.length / rowsPerPage);
 

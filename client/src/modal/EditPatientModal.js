@@ -65,6 +65,7 @@ const EditPatientModel = ({
       );
       toast.success("Patient updated successfully!"); // Show success notification
       setGlobalRefetch((prev) => !prev);
+      setRefetch(prev => !prev);
       setSelectedPatient(null);
       setSelectedPatient(res.data.patient);
     } catch (error) {
