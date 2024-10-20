@@ -15,6 +15,7 @@ import ScanQrModalParamarcy from "../components/ScanQrModalParamarcy";
 import ScanQrModalRaidiology from "../modal/ScanQrModalRaidiology";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 const Radiology = () => {
   const [page, setPage] = useState(1);
@@ -24,6 +25,8 @@ const Radiology = () => {
   const [refetch, setRefetch] = useState(false);
   const rowsPerPage = 6;
   const pages = Math.ceil(x.length / rowsPerPage);
+  const [showModal, setShowModal] = useState(false); // State to show/hide modal
+  const [patientQueue, setPatientQueue] = useState([]); // State to hold patient queue details
 
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -71,11 +74,9 @@ const Radiology = () => {
   const deliverdXray = async () => {
     console.log(datac);
     try {
+      // Mark the X-ray as delivered
       const response = await fetch(
-        `http://localhost:5000/medical-record/xray/delivered/${
-          x[x.length - 1]?._id
-        }`,
-
+        `http://localhost:5000/medical-record/xray/delivered/${x[x.length - 1]?._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -86,9 +87,23 @@ const Radiology = () => {
           }),
         }
       );
+  
+      // Check if X-ray was delivered successfully
       if (response.status === 200) {
         toast.success("Xray delivered successfully.");
-        setRefetch(!refetch);
+        
+        //remove the patient from the X-ray queue
+        const removeResponse = await fetch(`http://localhost:5000/medical-record/xqueue/remove/${datac._id}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        });
+  
+        if (removeResponse.status === 200) {
+        } else {
+          toast.error("Failed to remove patient from the queue.");
+        }
+  
+        setRefetch(!refetch); // Trigger a refetch to update the displayed data
       } else {
         toast.error("Failed to deliver Xray.");
       }
@@ -97,6 +112,7 @@ const Radiology = () => {
       toast.error("Failed to deliver Xray.");
     }
   };
+  
 
   //retrive the age of the patient
   useEffect(() => {
@@ -134,6 +150,7 @@ const Radiology = () => {
   
       if (response.status === 200) {
         toast.success("Patient successfully added to the X-ray queue.");
+        setRefetch(!refetch);
       } else {
         const data = await response.json();
         toast.error(data.message || "Failed to add patient to the queue.");
@@ -143,12 +160,28 @@ const Radiology = () => {
       toast.error("An error occurred while adding the patient to the queue.");
     }
   };
+
+  // Fetch patient queue and display in the modal
+  const fetchPatientQueue = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/medical-record/xqueue/getData");
+      setPatientQueue(response.data.queue); // Set the patient queue data
+      setShowModal(true); // Show modal when data is fetched
+    } catch (error) {
+      console.error("Error fetching patient queue:", error);
+    }
+  };
+
+  // Close the modal
+  const closeModal = () => {
+    setShowModal(false);
+  };
   
 
   return (
     <Layout>
         <div className="">
-          <Xraycards />
+          <Xraycards refetch={refetch} />
         </div>
       <div className="flex px-10">
         <div className="flex flex-col items-center justify-center">
@@ -252,7 +285,7 @@ const Radiology = () => {
             <Button color="success" onClick={addToQueue}>
               Add to Queue
             </Button> &nbsp;&nbsp;&nbsp;
-            <Button color="primary">
+            <Button color="primary" onClick={fetchPatientQueue}>
               Show Queue
             </Button>
           </div>
@@ -308,11 +341,56 @@ const Radiology = () => {
         onOpenChange={onModalChange}
       />
 
-      {/* <PrintModel
-        isOpen={isPrintModalOpen}
-        onOpenChange={onPrintModalChange}z
-        unavailableDrugs={unavailableDrugs}
-      /> */}
+
+      {/* Modal for displaying patient queue */}
+          {showModal && (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg z-60">
+              <h2 className="text-lg font-semibold mb-4">Patient Queue</h2>
+              <table className="table-auto w-full">
+                <thead>
+                  <tr>
+                    <th className="px-4 py-2">Position</th>
+                    <th className="px-4 py-2">Full Name</th>
+                    <th className="px-4 py-2">ID Number</th>
+                    <th className="px-4 py-2">Phone Number</th>
+                    <th className="px-4 py-2">Email</th>
+                    <th className="px-4 py-2" hidden>Date of Birth</th>
+                    <th className="px-4 py-2" hidden>Address</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {patientQueue.map((queueItem, index) => (
+                    <tr
+                      key={queueItem._id}
+                      className="cursor-pointer hover:bg-gray-100"
+                      onClick={() => {
+                        setData(queueItem.patientId);
+                        setShowModal(false);
+                        setRefetch(!refetch); // Trigger the refetch for X-ray details
+                      }}
+                    >
+                      <td className="border px-4 py-2">{index + 1}</td>
+                      <td className="border px-4 py-2">
+                        {`${queueItem.patientId.firstName} ${queueItem.patientId.lastName}`}
+                      </td>
+                      <td className="border px-4 py-2">{queueItem.patientId.idNumber}</td>
+                      <td className="border px-4 py-2">{queueItem.patientId.phoneNumber}</td>
+                      <td className="border px-4 py-2">{queueItem.patientId.email}</td>
+                      <td className="border px-4 py-2" hidden>{queueItem.patientId.dob}</td>
+                      <td className="border px-4 py-2" hidden>{queueItem.patientId.address}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onClick={closeModal}>
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
+
     </Layout>
   );
 };

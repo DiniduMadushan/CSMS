@@ -3,11 +3,10 @@ import { CiCalendarDate, CiTimer } from "react-icons/ci";
 import { FaUsers } from "react-icons/fa6";
 import axios from "axios";
 
-const CardStarter = () => {
+const CardStarter = (refetch) => {
   const [date, setDate] = useState(getDateTime());
   const [time, setTime] = useState(getTime());
   const [patientsCount, setPatientsCount] = useState(0); // State for total patients
-  const [staffCount, setStaffCount] = useState(0); // State for total staff members
   const [xrayCountToday, setXrayCountToday] = useState(0); // State for total X-rays issued today
   const [xrayQueueCount, setXrayQueueCount] = useState(0); // State for X-rays in the queue
   const [showModal, setShowModal] = useState(false); // State to show/hide modal
@@ -30,7 +29,7 @@ const CardStarter = () => {
     };
 
     fetchCounts();
-  }, []);
+  }, [refetch]);
 
   // Update time every second
   useEffect(() => {
@@ -99,8 +98,8 @@ const CardStarter = () => {
       <div className="mt-5 flex px-10 py-3 items-center justify-center gap-5 bg-slate-200 rounded-lg">
         <FaUsers size={30} className="text-blue-500" />
         <div className="flex flex-col gap-2">
-          <h1 className="font-semibold text-sm">Total X-rays issued today</h1>
-          <h2 className="text-gray-700 text-sm">{xrayCountToday}</h2> {/* Display total X-rays issued today */}
+          <h1 className="font-semibold text-sm">Total Patients in the system</h1>
+          <h2 className="text-gray-700 text-sm">{patientsCount}</h2> {/* Display total X-rays issued today */}
         </div>
       </div>
 
@@ -117,10 +116,8 @@ const CardStarter = () => {
 
       {/* Modal for displaying patient queue */}
       {showModal && (
-        <div
-          className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50" // Full-page overlay with higher z-index
-        >
-          <div className="bg-white p-6 rounded-lg shadow-lg z-60"> {/* Ensure the modal content has a high z-index */}
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg z-60">
             <h2 className="text-lg font-semibold mb-4">Patient Queue</h2>
             <table className="table-auto w-full">
               <thead>
@@ -133,7 +130,11 @@ const CardStarter = () => {
               </thead>
               <tbody>
                 {patientQueue.map((queueItem, index) => (
-                  <tr key={queueItem._id}>
+                  <tr
+                    key={queueItem._id}
+                    className="cursor-pointer hover:bg-gray-100"
+                    onClick={() => console.log("Clicked row for:", queueItem.patientId)}
+                  >
                     <td className="border px-4 py-2">{index + 1}</td>
                     <td className="border px-4 py-2">
                       {`${queueItem.patientId.firstName} ${queueItem.patientId.lastName}`}

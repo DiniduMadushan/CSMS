@@ -699,11 +699,58 @@ export const getXqueueData = async (req, res) => {
   try {
     const queue = await XrayQueue.find()
       .sort({ createdAt: 1 }) 
-      .populate("patientId", "firstName lastName idNumber phoneNumber");
+      .populate("patientId", "firstName lastName idNumber phoneNumber email dob address");
 
     res.status(200).json({ queue });
   } catch (error) {
     console.error("Error fetching X-ray queue:", error);
     res.status(500).json({ message: "Server error while fetching X-ray queue" });
+  }
+};
+
+//remove from the xray queue
+
+export const removeXrayQueue = async (req, res) => {
+  const patientId = req.params.patientId; 
+
+  try {
+    const result = await XrayQueue.findOneAndDelete({ patientId: patientId });
+    if (!result) {
+      return res.status(404).json({ message: 'Patient not found in the queue.' });
+    }
+
+    return res.status(200).json({ message: 'Patient removed from the X-ray queue successfully.' });
+  } catch (error) {
+    console.error("Error removing patient from queue:", error);
+    return res.status(500).json({ message: 'An error occurred while removing the patient from the queue.' });
+  }
+};
+
+// get the no of xray requests of the current date
+
+export const countXQueueToday = async (req, res) => {
+  console.log("inside count");
+  
+  try {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0); 
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999); 
+
+    // Count the documents created today
+    const count = await Xray.countDocuments({
+      createdAt: {
+        $gte: startOfDay,  
+        $lt: endOfDay     
+      }
+    });
+    console.log(count);
+    
+
+    res.status(200).json({ count });
+  } catch (error) {
+    console.error("Error counting XQueue documents:", error);
+    res.status(500).json({ message: "Failed to count XQueue documents" });
   }
 };
