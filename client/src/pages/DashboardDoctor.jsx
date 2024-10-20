@@ -96,7 +96,6 @@ const DashboardDoctor = () => {
     <Layout>
       <div className="flex justify-start flex-col items-start">
         <div className="">
-          {/* Pass the refetch prop to DoctorCards */}
           <DoctorCards refetch={refetch} />
         </div>
         <div className="flex flex-col items-center justify-center">

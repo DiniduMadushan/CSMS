@@ -10,6 +10,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import Layout from "../layout/Layout";
+import Xraycards from "../components/XrayCards"
 import ScanQrModalParamarcy from "../components/ScanQrModalParamarcy";
 import ScanQrModalRaidiology from "../modal/ScanQrModalRaidiology";
 import { useEffect, useMemo, useState } from "react";
@@ -117,8 +118,38 @@ const Radiology = () => {
     return age;
   };
 
+  // add to x-ray queue
+  const addToQueue = async () => {
+    if (!datac || !datac._id) {
+      toast.error("No patient data available to add to the queue.");
+      return;
+    }
+  
+    try {
+      const response = await fetch("http://localhost:5000/medical-record/addToXqueue", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ patientId: datac._id }), 
+      });
+  
+      if (response.status === 200) {
+        toast.success("Patient successfully added to the X-ray queue.");
+      } else {
+        const data = await response.json();
+        toast.error(data.message || "Failed to add patient to the queue.");
+      }
+    } catch (error) {
+      console.error("Error adding patient to queue:", error);
+      toast.error("An error occurred while adding the patient to the queue.");
+    }
+  };
+  
+
   return (
     <Layout>
+        <div className="">
+          <Xraycards />
+        </div>
       <div className="flex px-10">
         <div className="flex flex-col items-center justify-center">
           <button
@@ -217,6 +248,12 @@ const Radiology = () => {
           <div className="w-full flex justify-center mt-10">
             <Button onClick={() => deliverdXray()} color="danger">
               Xray is ready
+            </Button> &nbsp;&nbsp;&nbsp;
+            <Button color="success" onClick={addToQueue}>
+              Add to Queue
+            </Button> &nbsp;&nbsp;&nbsp;
+            <Button color="primary">
+              Show Queue
             </Button>
           </div>
         </div>

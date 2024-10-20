@@ -23,7 +23,9 @@ import {
   updatePrescription,
   deletePrescription,
   getAppoinments,
-  // addXrayQueue,
+  addToXrayQueue,
+  getXqueueCount,
+  getXqueueData,
   // removeXrayQueue,
   // getXrayQueue,
 } from "../controller/medicalController.js";
@@ -54,5 +56,9 @@ medicalRouter.put("/updateMedicalRecord/:id", updateMedicalRecord);
 medicalRouter.put("/update/prescription/:id", updatePrescription);
 medicalRouter.delete("/delete/prescription/:id", deletePrescription);
 medicalRouter.get("/appointments/getAppoinments", getAppoinments);
+medicalRouter.post("/addToXqueue", addToXrayQueue);
+medicalRouter.get("/xqueue/getCount", getXqueueCount);
+medicalRouter.get("/xqueue/getData", getXqueueData);
+
 
 export default medicalRouter;

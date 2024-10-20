@@ -5,6 +5,7 @@ import MedicalRecord from "../model/medicalRecord.js";
 import Queue from "../model/queue.js";
 import Patient from "../model/Patients.js"
 import Xray from "../model/xray.js";
+import XrayQueue from "../model/xrayQueue.js";
 import PrescriptionList from "../model/prescriptionList.js";
 import { xRayDeliveredSms } from "../utils/SendSMS.js";
 
@@ -630,7 +631,6 @@ export const deletePrescription = async (req, res) => {
 
 export const getAppoinments = async (req, res) => {
   const { date } = req.query; 
-console.log("inside appoinments");
 
   try {
     const appointments = await Appointment.find({ date })
@@ -654,4 +654,56 @@ console.log("inside appoinments");
   }
 };
 
+//add to x-ray queue
 
+export const addToXrayQueue = async (req, res) => {
+  const { patientId } = req.body;
+
+  if (!patientId) {
+    return res.status(400).json({ message: "Patient ID is required" });
+  }
+
+  try {
+    const existingQueue = await XrayQueue.findOne({ patientId });
+    if (existingQueue) {
+      return res.status(400).json({ message: "Patient is already in the queue" });
+    }
+
+    // Create new XQueue entry
+    const queueEntry = new XrayQueue({ patientId });
+    await queueEntry.save();
+
+    return res.status(200).json({ message: "Patient added to X-ray queue" });
+  } catch (error) {
+    console.error("Error adding to queue:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+//get total x-ray queue count
+
+export const getXqueueCount = async (req, res) => {
+  
+  try {
+    const xrayQueueCount = await XrayQueue.countDocuments();
+    res.status(200).json({ totalInQueue: xrayQueueCount });
+  } catch (error) {
+    console.error("Error fetching X-ray queue count:", error);
+    res.status(500).json({ message: "Error fetching X-ray queue count" });
+  }
+};
+
+//get patients data in the xray queue
+
+export const getXqueueData = async (req, res) => {
+  try {
+    const queue = await XrayQueue.find()
+      .sort({ createdAt: 1 }) 
+      .populate("patientId", "firstName lastName idNumber phoneNumber");
+
+    res.status(200).json({ queue });
+  } catch (error) {
+    console.error("Error fetching X-ray queue:", error);
+    res.status(500).json({ message: "Server error while fetching X-ray queue" });
+  }
+};
