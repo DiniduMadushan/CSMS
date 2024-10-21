@@ -263,6 +263,8 @@ export const updateMedicalXray = async (req, res) => {
 };
 
 
+
+
 //create a lab request
 
 export const createLabReport = async (req, res) => {

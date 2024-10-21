@@ -33,7 +33,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm }) => {
   );
 };
 
-const NewXrayModal = ({ isOpen, onOpenChange, datac, docName }) => {
+const NewXrayModal = ({ isOpen, onOpenChange, datac, docName,onAddXray }) => {
   const [xray, setXray] = useState("");
   const [isConfirmOpen, setIsConfirmOpen] = useState(false); // State for confirmation modal
 
@@ -66,10 +66,10 @@ const NewXrayModal = ({ isOpen, onOpenChange, datac, docName }) => {
         toast.success("X-Ray Added Successfully");
         setXray(""); // Clear the form after submission
         onOpenChange(); // Close the X-ray modal
+        onAddXray();
       }
     } catch (error) {
-      toast.error("Failed to add X-ray");
-      console.error(error);
+      toast.error(error);
     }
   };
 

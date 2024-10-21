@@ -12,7 +12,7 @@ import {
   import { useEffect, useMemo, useState } from "react";
   import axios from "axios";
   
-  const LabHistoryTable = ({ patientId }) => {
+  const LabHistoryTable = ({ patientId, triggerRefetch }) => {
     const [page, setPage] = useState(1);
     const [labHistory, setLabHistory] = useState([]);
     const rowsPerPage = 6;
@@ -36,7 +36,7 @@ import {
       if (patientId) {
         fetchLabHistory();
       }
-    }, [patientId]);
+    }, [patientId,triggerRefetch]);
   
     const pages = Math.ceil(labHistory.length / rowsPerPage);
   

@@ -168,7 +168,7 @@ const MyFeedbacks = ({ myemail }) => {
                   <Tooltip content="Delete Feedback">
                     <Button
                       auto
-                      color="error"
+                      color="danger"
                       size="sm"
                       onClick={() => handleDeleteConfirmation(feedback._id)} 
                     >

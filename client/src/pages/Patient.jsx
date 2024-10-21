@@ -10,6 +10,7 @@ const PatientPage = () => {
   const [user, setUser] = useState(null);
   const [myemail, setMyemail] = useState(null);
   const [loading, setLoading] = useState(true); // Add loading state
+  const [refetch, setRefetch] = useState(false);
 
   useEffect(() => {
     const authUser = localStorage.getItem("authUser");
@@ -36,6 +37,10 @@ const PatientPage = () => {
   if (loading) {
     return <p>Loading...</p>; // Show a loading message while data is being fetched
   }
+
+  const handleFeedbackdAdd = () => {
+    setRefetch(!refetch); // Toggle refetch to update tables
+  };
 
   return (
     <Layout>

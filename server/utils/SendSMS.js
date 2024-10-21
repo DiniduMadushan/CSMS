@@ -93,7 +93,7 @@ export const xRayDeliveredSms = async (firstName, lastName, phoneNumber) => {
 };
 
 export const labReportReadySms = async (firstName, lastName, phoneNumber) => {
-  const message = `Dear ${firstName} ${lastName}, Your Lab Report is ready. Please collect it from the Laboratory unit ref no:231xrhbey.`;
+  const message = `Dear ${firstName} ${lastName}, Your Lab Report is delivered ref no:231xrhbey.`;
 
   const phone = validPhoneNumber(phoneNumber);
 

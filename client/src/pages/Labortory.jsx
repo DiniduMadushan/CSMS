@@ -85,12 +85,16 @@ const Laboratory = () => {
     formData.append("file", file);     
     formData.append("labId", lab[lab.length - 1]?._id); // Assuming datac._id is the patient ID  
     formData.append("delivered", true); // Mark as delivered
+    formData.append("firstName", datac.firstName); // Append additional fields
+    formData.append("lastName", datac.lastName);
+    formData.append("phoneNumber", datac.phoneNumber);
 
     try {       
       const response = await axios.post("http://localhost:5000/reports/upload", formData, {         
         headers: {           
           "Content-Type": "multipart/form-data",         
-        },       
+        },
+               
       });       
 
       if (response.status === 200) {         

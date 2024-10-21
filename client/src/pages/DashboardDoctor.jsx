@@ -205,10 +205,10 @@ const DashboardDoctor = () => {
         <PrescriptionHistoryTable patientId={datac?._id} triggerRefetch={refetch} />
       </div>
       <div className="flex justify-center">
-        <XrayHistoryTable patientId={datac?._id} />
+        <XrayHistoryTable patientId={datac?._id} triggerRefetch={refetch} />
       </div>
       <div className="flex justify-center">
-        <LabHistoryTable patientId={datac?._id} />
+        <LabHistoryTable patientId={datac?._id} triggerRefetch={refetch} />
       </div>
 
       <ScanQrModal
@@ -237,6 +237,7 @@ const DashboardDoctor = () => {
         onOpenChange={onXrayChange}
         datac={datac}
         docName={doc_name}
+        onAddXray={handleMedicalRecordAdd}
       />
 
       <NewBloodReportModal
@@ -244,6 +245,7 @@ const DashboardDoctor = () => {
         onOpenChange={onBloodChange}
         datac={datac}
         docName={doc_name}
+        onAddLab={handleMedicalRecordAdd}
       />
       <ClinicDateModal
         isOpen={isClinicDateOpen}

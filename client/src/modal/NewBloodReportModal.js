@@ -11,7 +11,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-const NewBloodReportModal = ({ isOpen, onOpenChange, datac, docName }) => {
+const NewBloodReportModal = ({ isOpen, onOpenChange, datac, docName,onAddLab }) => {
   const [bloodReport, setBloodReport] = useState("");
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // State for confirm modal
 
@@ -49,6 +49,7 @@ const NewBloodReportModal = ({ isOpen, onOpenChange, datac, docName }) => {
         onOpenChange(); // Close the modal after success
         setBloodReport(""); // Clear the form after submission
         setIsConfirmModalOpen(false); // Close the confirmation modal
+        onAddLab();
       }
     } catch (error) {
       toast.error("Failed to add report request");
