@@ -7,6 +7,7 @@ import {
   userLogin,
   userRegister,
   getUserCount,
+  getRoleUsers,
 } from "../controller/userController.js";
 import { staffRegister } from "../controller/staffController.js";
 
@@ -20,6 +21,6 @@ userRouter.get("/:id", getUserById);
 userRouter.put("/:id", updateUser);
 userRouter.delete("/:id", deleteUser);
 userRouter.get("/count", getUserCount);
-
+userRouter.get("/getroleusers/:role", getRoleUsers);
 
 export default userRouter;

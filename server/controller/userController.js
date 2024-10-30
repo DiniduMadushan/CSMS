@@ -115,3 +115,15 @@ export const getUserCount=async (req, res) => {
     res.status(500).json({ error: "Error fetching staff count" });
   }
 };
+
+export const getRoleUsers = async (req, res) =>{
+  const role = req.params?.role
+  try {
+    const findResult = await User.find({
+      role: role
+    });
+    res.status(200).json({result : findResult})
+  } catch {
+    res.send("Internal Server Error")
+  }
+}

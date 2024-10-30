@@ -1,27 +1,33 @@
 import { useEffect, useState } from "react";
 import Layout from "../layout/Layout";
-import MyFeedbacks from "../components/MyFeedbacks";
 import PatientsMedicalHistory from "../components/PatientsMedicalHistory";
 import { Button, useDisclosure } from "@nextui-org/react";
 import RequestNewAppointment from "../modal/RequestNewAppointment";
-import toast from "react-hot-toast";
+import axios from "axios";
 
 const PatientPage = () => {
-  const [user, setUser] = useState(null);
-  const [myemail, setMyemail] = useState(null);
-  const [loading, setLoading] = useState(true); // Add loading state
-  const [refetch, setRefetch] = useState(false);
+  const [nextClinicDate, setNextClinicDate] = useState("no appointment");
+  const [clincIssuedBy, setClinicIssuedBy] = useState('');
+  const [patientId , setPatientId] = useState('');
 
   useEffect(() => {
-    const authUser = localStorage.getItem("authUser");
-    if (!authUser) {
-      window.location.href = "/login";
-      return;
-    }
-    const parsedUser = JSON.parse(authUser);
-    setUser(parsedUser);
-    setMyemail(parsedUser.email);
-    setLoading(false); // Set loading to false after email is set
+    const user = JSON.parse(localStorage.getItem("authUser"));
+    axios.get(`http://localhost:5000/patients/email2id/${user.email}`)
+    .then( (response) => {
+      const patientId = response.data.patientId;
+      setPatientId(patientId);
+      //get next clinc date
+      axios.get(`http://localhost:5000/medical-record/appointments/${patientId}`)
+      .then(response => {
+        const data = response.data;
+        if (data.message === "appointment"){
+          const date = new Date(data.appointment.date);
+          setClinicIssuedBy(data.appointment.doctorId);
+          setNextClinicDate(date);
+        }
+        else {setNextClinicDate("no appointment")}
+      })
+    })
   }, []);
 
   const {
@@ -30,64 +36,82 @@ const PatientPage = () => {
     onOpenChange: onModalChange,
   } = useDisclosure();
 
+  const ClickOpen = () => {
+    openModal();
+  };
   const handleShowMore = () => {
     openModal();
   };
 
-  if (loading) {
-    return <p>Loading...</p>; // Show a loading message while data is being fetched
-  }
+  // Download full report
+  const fullReportDownload = () => {
+    const payload = {
+      patientId: patientId
+    };
 
-  const handleFeedbackdAdd = () => {
-    setRefetch(!refetch); // Toggle refetch to update tables
+    axios.post("http://localhost:5000/report/full", payload, {
+      responseType: 'blob'
+    })
+    .then(response => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      const link = document.createElement('a');
+      link.href = url;
+
+      const fileName = response.headers['content-disposition'] 
+                        ? response.headers['content-disposition'].split('filename=')[1] 
+                        : 'Full_Report.pdf';
+                        
+      link.setAttribute('download', fileName);
+      
+      document.body.appendChild(link);
+      link.click();
+      
+      document.body.removeChild(link);
+    })
+    .catch(error => {
+      console.error('Error downloading the report:', error);
+    });
   };
 
   return (
     <Layout>
-      <div className="flex justify-center items-center mt-10 flex-col">
-        <div>
+      <div className="flex justify-center items-center mt-10  flex-col  ">
+      <div> 
           <PatientsMedicalHistory />
-
-          <div className="flex">
-            <Button color="primary" className="mt-10 ml-[600px]">
-              Download E-Book
-            </Button>
+        <div className="flex">
+          <Button color="primary" className="mt-10 ml-[600px]" onClick={fullReportDownload}>
+            Download E-Book
+          </Button>
+        </div>
+        <div>
+          <div className="mt-10 flex p-2 border-2 w-[800px] rounded-md">
+            Next Clinic Date :
+            <span className="ml-20">
+              {nextClinicDate != "no appointment" ? (
+                <span>{nextClinicDate.getFullYear()}/{nextClinicDate.getMonth()+1}/{nextClinicDate.getDate()}</span>
+              ) : "No Appointment"}
+            </span>
           </div>
-
-          <div>
-            <div className="mt-10 flex p-2 border-2 w-[800px] rounded-md">
-              Next Clinic Date :
-              <span className="ml-20">
-                {new Date().getDate() + 1} / {new Date().getMonth() + 1} /{" "}
-                {new Date().getFullYear()}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex">
-            <Button
-              onClick={handleShowMore}
-              color="primary"
-              className="mt-10 ml-[600px]"
-            >
-              Request a New Appointment
-            </Button>
-          </div>
-
-          {myemail ? (
-            <MyFeedbacks myemail={myemail} />
-          ) : (
-            toast.error("User email not available")
-          )}
+        </div>
+        <div className="flex">
+          <Button
+            onClick={() => handleShowMore()}
+            color="primary"
+            className="mt-10 ml-[600px]"
+          >
+            Request to new Appointment
+          </Button>
         </div>
       </div>
-
+      </div>
       <RequestNewAppointment
+        patientId = {patientId}
+        doctorId={clincIssuedBy}
         isOpen={isModalOpen}
         onOpenChange={onModalChange}
       />
     </Layout>
   );
 };
-
 export default PatientPage;

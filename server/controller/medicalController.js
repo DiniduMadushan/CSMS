@@ -344,7 +344,7 @@ export const updateLabReport = async (req, res) => {
 //set next clinic date
 
 export const nextClinicDate = async (req, res) => {
-  const { patientId, dateIssuedBy, date } = req.body;
+  const { patientId, dateIssuedBy, date , doctorId} = req.body;
 
   
   if (!patientId) {
@@ -358,7 +358,9 @@ export const nextClinicDate = async (req, res) => {
   if (!date) {
     return res.status(400).json({ message: "Next clinic date is required" });
   }
-
+  if (!doctorId) {
+    return res.status(400).json({ message: "Doctor ID is required" });
+  }
   try {
 
     const clinicDate = new Date(date);
@@ -373,12 +375,11 @@ export const nextClinicDate = async (req, res) => {
       patientId,
       dateIssuedBy,
       date: new Date(date),
+      doctorId: doctorId,
     });
 
-    
     await newAppointment.save();
 
-    
     return res.status(201).json({
       message: "Next clinic date set successfully",
       appointment: newAppointment,
@@ -768,3 +769,17 @@ export const getTotalLabResults = async (req, res) => {
     res.status(500).json({ message: "Failed to get the total count of lab reports" });
   }
 };
+
+//get paitents next clinic date
+export const getNextClinicDate = async (req, res) => {
+  const patientId = req.params.id;
+  const appointmentFind = await Appointment.find({patientId:patientId})
+  //if no appointments for patient
+  if (appointmentFind.length === 0) { 
+    res.status(200).json({message:"no appointments"})
+    return
+  }
+  console.log(appointmentFind)
+  const appointment = appointmentFind[appointmentFind.length-1]
+  res.status(200).json({message:"appointment", appointment: appointment})
+}

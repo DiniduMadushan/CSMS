@@ -11,7 +11,7 @@ import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const ClinicDateModal = ({ isOpen, onOpenChange, datac, docName }) => {
+const ClinicDateModal = ({ isOpen, onOpenChange, datac, docName, docId}) => {
   const [date, setDate] = useState(null);
 
   const onSubmit = async (e) => {
@@ -36,8 +36,9 @@ const ClinicDateModal = ({ isOpen, onOpenChange, datac, docName }) => {
       patientId: datac._id,
       date: new Date(formattedDate), // Ensure this is a Date object
       dateIssuedBy: docName,
+      doctorId : docId,
     };
-
+    console.log("docId  asdfasdfasdf : ",  )
     try {
       const res = await axios.post("http://localhost:5000/medical-record/nextDate", nextClinicdate);
 

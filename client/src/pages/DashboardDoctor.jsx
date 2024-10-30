@@ -13,11 +13,19 @@ import AddXrayModal from "../modal/NewXrayModal";
 import NewBloodReportModal from "../modal/NewBloodReportModal";
 import ClinicDateModal from "../modal/ClinicDateModal";
 import LabHistoryTable from "../components/LabHistoryTable";
+import toast from "react-hot-toast";
 
 const DashboardDoctor = () => {
   const [datac, setDatac] = useState(null);
   const [doc_name, setDocName] = useState(null);
   const [refetch, setRefetch] = useState(false); // State to trigger refetching
+  const [docId, setDocId] = useState("")
+
+  useEffect( () => { 
+    const storedUser = localStorage.getItem("authUser");
+    const parsedUser = JSON.parse(storedUser);
+    setDocId(parsedUser._id)
+  })
 
   const {
     isOpen: isModalOpen,
@@ -91,6 +99,43 @@ const DashboardDoctor = () => {
   const handleMedicalRecordAdd = () => {
     setRefetch(!refetch); // Toggle refetch to update tables
   };
+
+  //Function to download patient's E-book
+  const downloadEBook = () => {
+    if (!datac?._id) {
+      toast.error("Patient ID is required. Please scan the QR code.");
+      return
+    }
+    const payload = {
+      patientId: datac._id
+    };
+
+    axios.post("http://localhost:5000/report/full", payload, {
+      responseType: 'blob'
+    })
+    .then(response => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      const link = document.createElement('a');
+      link.href = url;
+
+      const fileName = response.headers['content-disposition'] 
+                        ? response.headers['content-disposition'].split('filename=')[1] 
+                        : 'Full_Report.pdf';
+                        
+      link.setAttribute('download', fileName);
+      
+      document.body.appendChild(link);
+      link.click();
+      
+      document.body.removeChild(link);
+    })
+    .catch(error => {
+      console.error('Error downloading the report:', error);
+    });
+  }
+  
+  
 
   return (
     <Layout>
@@ -194,6 +239,12 @@ const DashboardDoctor = () => {
             >
               Next Clinic Date
             </button>
+            <button
+              onClick={downloadEBook}
+              className="border px-20 py-2 rounded-lg border-white text-sm bg-blue-600 text-white hover:bg-blue-800"
+            >
+              Download E-book
+            </button>
           </div>
         </div>
       </div>
@@ -252,6 +303,7 @@ const DashboardDoctor = () => {
         onOpenChange={onClinicDateChange}
         datac={datac}
         docName={doc_name}
+        docId={docId}
       />
     </Layout>
   );

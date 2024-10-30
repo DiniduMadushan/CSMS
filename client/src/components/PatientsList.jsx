@@ -92,7 +92,7 @@ const PatientsList = ({ setRefetchRegistrarCards }) => {
   // Trigger refetch of RegistrarCards after patient add or delete
   useEffect(() => {
     setRefetchRegistrarCards(prev => !prev);
-  }, [refetch, refetchsss]);
+  }, );
 
   return (
     <div>

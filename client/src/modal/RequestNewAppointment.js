@@ -9,11 +9,25 @@ import {
   ModalHeader,
 } from "@nextui-org/react";
 import { useState } from "react";
+import axios from "axios";
 
 import toast from "react-hot-toast";
 
-const RequestNewAppointment = ({ isOpen, onOpenChange }) => {
-  const [date, setDate] = useState(null);
+const RequestNewAppointment = ({patientId, doctorId, isOpen, onOpenChange }) => {
+  const [reason, setReason] = useState("");
+  
+  const sendAppointmentRequest = () => {
+    const payload = {
+      patientId : patientId,
+      doctorId : doctorId,
+      reason : reason,
+    }
+    axios.post('http://localhost:5000/appointment', payload)
+    .then( response => {
+      console.log(response.data)
+    })
+  }
+
   return (
     <Modal
       isOpen={isOpen}
@@ -28,10 +42,10 @@ const RequestNewAppointment = ({ isOpen, onOpenChange }) => {
               Request New Appointment
             </ModalHeader>
             <ModalBody>
-              <DateInput
-                // onChange={(e) => setDate(e.target.value)}
-                placeholder="new appointment date"
-              />
+              <Input 
+                rows={4}
+                onChange={ (e) => setReason(e.target.value) }
+              ></Input>
             </ModalBody>
             <ModalFooter>
               <Button
@@ -45,8 +59,10 @@ const RequestNewAppointment = ({ isOpen, onOpenChange }) => {
               <Button
                 color="primary"
                 onClick={() => {
-                  toast.success("new appointment date Requested Successfully");
-                  onClose();
+                  if (reason.trim() != "") {
+                    sendAppointmentRequest();
+                    onClose();
+                  }
                 }}
               >
                 Request

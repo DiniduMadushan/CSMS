@@ -10,8 +10,11 @@ const AppointmentsSchema = new mongoose.Schema({
   
   date: {
     type: Date
+  },
+  doctorId : {
+    type: String
   }
- 
+
 });
 
 const Appointment = mongoose.model("Appointment", AppointmentsSchema);

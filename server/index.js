@@ -8,6 +8,12 @@ import patientRouter from "./router/patientRouter.js";
 import medicalRouter from "./router/medicalRouter.js";
 import reportsRouter from "./router/reportsRouter.js";
 import adminRouter from "./router/adminRouter.js"
+
+import botRouter from "./router/botRouter.js";
+import appointmentRequestRouter from "./router/appointmentRouter.js"
+import reportDownloadRouter from "./router/reportDownloadRoute.js";
+import adminMessageRouter from "./router/adminMessageRouter.js";
+
 import feedbackRouter from  "./router/feedbackRouter.js";
 import { sendUsernamePassword } from "./utils/SendSMS.js";
 import path from "path";
@@ -40,6 +46,11 @@ app.use("/medical-record", medicalRouter);
 app.use("/reports", reportsRouter);
 app.use("/admin", adminRouter);
 app.use("/feedbacks", feedbackRouter);
+
+app.use("/report", reportDownloadRouter);
+app.use("/appointment", appointmentRequestRouter);
+app.use("/adminmessage", adminMessageRouter);
+app.use("/bot", botRouter);
 
 connectMongoDB();
 

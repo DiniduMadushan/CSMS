@@ -119,3 +119,23 @@ export const deletePatient = async (req, res) => {
 };
 
 export const sendEmail = async (req, res) => {};
+
+export const getPatientByEmail = async (req, res) => {
+  try {
+    const email = req.params.email;
+    //search for email on patients list
+    const patientFind = await Patients.find( {email : email})
+    if (patientFind) {
+      console.log("Patient Found");
+      const patientId = patientFind[0]._id.toString();
+      console.log(patientId);
+      res.status(200).json({patientId : patientId  , message: "patient found"});
+    }
+    else {
+      res.status(200).json({message:"not found"});
+    }
+    
+  } catch (error) {
+    res.status(500).json({ message: error.message});
+  }
+}
