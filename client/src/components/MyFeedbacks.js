@@ -52,7 +52,7 @@ const MyFeedbacks = ({ myemail }) => {
 
   useEffect(() => {
     fetchFeedbacks();
-  }, [myemail]);
+  }, []);
 
   const handleEdit = (feedback) => {
     setEditingFeedback(feedback); // Set the feedback to be edited

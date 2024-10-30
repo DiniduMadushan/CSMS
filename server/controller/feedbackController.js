@@ -10,7 +10,7 @@ export const viewFeedback = async (req, res) => {
     if (email) {
       const feedbacks = await Feedback.find({ email });
       if (feedbacks.length === 0) {
-        return res.status(404).json({ message: "No feedbacks found for this email" });
+        // return res.status(404).json({ message: "No feedbacks found for this email" });
       }
       res.status(200).json(feedbacks);
     } else if (id) {

@@ -1,34 +1,54 @@
 import { useEffect, useState } from "react";
-import Layout from "../layout/Layout";
+import PatientLayout from "../layout/PatientLayout";
 import PatientsMedicalHistory from "../components/PatientsMedicalHistory";
+import MyFeedbacks from "../components/MyFeedbacks";
 import { Button, useDisclosure } from "@nextui-org/react";
 import RequestNewAppointment from "../modal/RequestNewAppointment";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const PatientPage = () => {
   const [nextClinicDate, setNextClinicDate] = useState("no appointment");
+  const [myemail, setMyemail] = useState(null);
   const [clincIssuedBy, setClinicIssuedBy] = useState('');
   const [patientId , setPatientId] = useState('');
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("authUser"));
-    axios.get(`http://localhost:5000/patients/email2id/${user.email}`)
-    .then( (response) => {
-      const patientId = response.data.patientId;
-      setPatientId(patientId);
-      //get next clinc date
-      axios.get(`http://localhost:5000/medical-record/appointments/${patientId}`)
-      .then(response => {
+    const authUser = localStorage.getItem("authUser");
+  
+    if (!authUser) {
+      window.location.href = "/login";
+      return;
+    }
+  
+    const parsedUser = JSON.parse(authUser);
+    setUser(parsedUser);
+    setMyemail(parsedUser.email);
+    setLoading(false); // Set loading to false after email is set
+  
+    axios.get(`http://localhost:5000/patients/email2id/${parsedUser.email}`)
+      .then((response) => {
+        const patientId = response.data.patientId;
+        setPatientId(patientId);
+  
+        // Get next clinic date
+        return axios.get(`http://localhost:5000/medical-record/appointments/${patientId}`);
+      })
+      .then((response) => {
         const data = response.data;
-        if (data.message === "appointment"){
+        if (data.message === "appointment") {
           const date = new Date(data.appointment.date);
           setClinicIssuedBy(data.appointment.doctorId);
           setNextClinicDate(date);
+        } else {
+          setNextClinicDate("no appointment");
         }
-        else {setNextClinicDate("no appointment")}
       })
-    })
+      .catch(error => console.error("Error fetching patient or appointment data:", error));
   }, []);
+  
 
   const {
     isOpen: isModalOpen,
@@ -74,8 +94,12 @@ const PatientPage = () => {
     });
   };
 
+  if (loading) {
+    return <p>Loading...</p>; // Show a loading message while data is being fetched
+  }
+
   return (
-    <Layout>
+    <PatientLayout>
       <div className="flex justify-center items-center mt-10  flex-col  ">
       <div> 
           <PatientsMedicalHistory />
@@ -103,6 +127,13 @@ const PatientPage = () => {
             Request to new Appointment
           </Button>
         </div>
+
+        {myemail ? (
+            <MyFeedbacks myemail={myemail} />
+          ) : (
+            toast.error("User email not available")
+          )}
+
       </div>
       </div>
       <RequestNewAppointment
@@ -111,7 +142,7 @@ const PatientPage = () => {
         isOpen={isModalOpen}
         onOpenChange={onModalChange}
       />
-    </Layout>
+    </PatientLayout>
   );
 };
 export default PatientPage;
