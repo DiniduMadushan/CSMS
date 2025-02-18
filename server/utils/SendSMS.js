@@ -130,3 +130,5 @@ const generatePassword = () => {
 const generateUsername = (firstName, lastName) => {
   return `${firstName}${lastName}`.toLowerCase();
 };
+
+//end of codes
