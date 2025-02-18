@@ -48,7 +48,7 @@ const DeletePatientModel = ({
             </ModalHeader>
             <ModalBody>
               <div>
-                If you delete this patient, all the information will be lost.
+                If you delete , all the information will be lost.
               </div>
             </ModalBody>
             <ModalFooter>

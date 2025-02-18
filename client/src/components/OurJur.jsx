@@ -30,7 +30,7 @@ doors, you will be greeted by our friendly staff and treated with the utmost res
         </div>
         <div className="grow ml-20 mr-10 ">
           <img
-            src="https://d3b6u46udi9ohd.cloudfront.net/wp-content/uploads/2023/03/22103615/ENT-1.jpg"
+            src="https://mradamshakir.co.uk/wp-content/uploads/2020/12/ear-conditions.jpg"
             alt="doctor"
             className="w-full h-[400px] object-cover rounded-lg"
           />

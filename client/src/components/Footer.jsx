@@ -51,7 +51,7 @@ const Footer = () => {
       </div>
       <hr />
       <p className="copyright">
-        @Copyright 2024 - ENT Clinic. All rights reserved.
+        Copyright@ 2024 - ENT Clinic-Kolonna Base Hospital. All rights reserved.
       </p>
     </footer>
   );

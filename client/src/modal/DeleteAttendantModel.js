@@ -45,11 +45,11 @@ const DeleteAttendantModel = ({
         {(onClose) => (
           <>
             <ModalHeader className="flex flex-col gap-1">
-              Delete Doctor
+              Delete Attendent
             </ModalHeader>
             <ModalBody>
               <div>
-                if you delete this doctor, all the information will be lost
+                if you delete, all the information will be lost
               </div>
             </ModalBody>
             <ModalFooter>

@@ -49,7 +49,7 @@ const DeleteReModel = ({
             </ModalHeader>
             <ModalBody>
               <div>
-                if you delete this doctor, all the information will be lost
+                if you delete, all the information will be lost
               </div>
             </ModalBody>
             <ModalFooter>
